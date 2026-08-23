@@ -174,7 +174,7 @@ export function getVisibleFields() {
 }
 
 /**
- * Gets values only from visible fields
+ * Gets values only from visible fields (TAX-010 extended)
  * Hidden fields are excluded from the returned object
  *
  * @param {HTMLFormElement} form - The form element
@@ -188,13 +188,45 @@ export function getVisibleFieldValues(form) {
   const values = {};
   const visibleFields = getVisibleFields();
 
-  // Map of form element names to field names
+  // Map of form element names to field names (TAX-010 extended)
   const fieldNameMap = {
+    // Basic income
     'salary': 'salary',
     'house-property': 'houseProperty',
     'business-income': 'business',
     'capital-gains': 'capitalGains',
     'other-income': 'otherIncome',
+
+    // TAX-010: Granular capital gains
+    'stcg-equity': 'stcgEquity',
+    'stcg-other': 'stcgOther',
+    'ltcg-equity': 'ltcgEquity',
+    'ltcg-other': 'ltcgOther',
+
+    // TAX-010: Trading income
+    'speculative-gains': 'speculativeGains',
+    'speculative-losses': 'speculativeLosses',
+    'fno-gains': 'fnoGains',
+    'fno-losses': 'fnoLosses',
+
+    // TAX-010: Expanded other income
+    'interest-income': 'interestIncome',
+    'dividend-income': 'dividendIncome',
+    'other-taxable': 'otherTaxable',
+
+    // TAX-010: Deductions
+    'standard-deduction': 'standardDeduction',
+    'section-80c': 'section80C',
+    'section-80ccd1b': 'section80CCD1B',
+    'section-80d': 'section80D',
+    'section-80e': 'section80E',
+    'section-80g': 'section80G',
+    'section-80tta': 'section80TTA',
+    'section-80ttb': 'section80TTB',
+    'hra': 'hra',
+    'lta': 'lta',
+    'home-loan-interest': 'homeLoanInterest',
+    'other-deductions': 'otherDeductions',
   };
 
   visibleFields.forEach(fieldName => {

@@ -62,7 +62,6 @@ Future agents may have separate responsibilities:
 - Planner → plans
 - Developer → implements
 - Tester → tests
-- Reviewer → reviews
 - Builder → builds
 - Deployer → deploys
 - Orchestrator → coordinates

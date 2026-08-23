@@ -2,12 +2,14 @@
  * Form Handler
  * Manages form submission and input handling
  *
- * Income Inputs (TAX-004 through TAX-008):
+ * Income Inputs (TAX-004 through TAX-008, TAX-010):
  * - salary: Salary income (TAX-004)
  * - houseProperty: House property income/loss (TAX-005)
  * - business: Business/professional income (TAX-006)
- * - capitalGains: Capital gains (TAX-007)
- * - otherIncome: Other income (TAX-008)
+ * - capitalGains: Capital gains (TAX-007/TAX-010 - granular)
+ * - otherIncome: Other income (TAX-008/TAX-010 - expanded)
+ * - tradingIncome: Speculative and F&O (TAX-010)
+ * - deductions: All Chapter VI-A deductions (TAX-010)
  *
  * Regime Selection (TAX-009):
  * - taxRegime: 'old' | 'new' | 'compare'
@@ -18,7 +20,7 @@ import { getSelectedRegime } from './regime-selector.js';
 import { DEFAULT_REGIME } from '../../shared/constants/regimes.js';
 
 /**
- * Handles tax form submission
+ * Handles tax form submission (TAX-010 extended)
  * @param {Event} event - Form submit event
  * @returns {Promise<void>}
  */
@@ -27,13 +29,48 @@ export async function handleFormSubmit(event) {
 
   const form = event.target;
 
-  // Collect form data including all income types (TAX-004 to TAX-008) and regime (TAX-009)
+  // Collect form data including all income types, deductions, and regime
   const formData = {
+    // Basic income (TAX-004 to TAX-008)
     salary: form.elements['salary']?.value || '',
     houseProperty: form.elements['house-property']?.value || '',
     business: form.elements['business-income']?.value || '',
     capitalGains: form.elements['capital-gains']?.value || '',
     otherIncome: form.elements['other-income']?.value || '',
+
+    // TAX-010: Granular capital gains
+    stcgEquity: form.elements['stcg-equity']?.value || '',
+    stcgOther: form.elements['stcg-other']?.value || '',
+    ltcgEquity: form.elements['ltcg-equity']?.value || '',
+    ltcgOther: form.elements['ltcg-other']?.value || '',
+
+    // TAX-010: Trading income
+    speculativeGains: form.elements['speculative-gains']?.value || '',
+    speculativeLosses: form.elements['speculative-losses']?.value || '',
+    fnoGains: form.elements['fno-gains']?.value || '',
+    fnoLosses: form.elements['fno-losses']?.value || '',
+
+    // TAX-010: Expanded other income
+    interestIncome: form.elements['interest-income']?.value || '',
+    dividendIncome: form.elements['dividend-income']?.value || '',
+    otherTaxable: form.elements['other-taxable']?.value || '',
+
+    // TAX-010: Deductions
+    deductions: {
+      standardDeduction: form.elements['standard-deduction']?.value || '',
+      section80C: form.elements['section-80c']?.value || '',
+      section80CCD1B: form.elements['section-80ccd1b']?.value || '',
+      section80D: form.elements['section-80d']?.value || '',
+      section80E: form.elements['section-80e']?.value || '',
+      section80G: form.elements['section-80g']?.value || '',
+      section80TTA: form.elements['section-80tta']?.value || '',
+      section80TTB: form.elements['section-80ttb']?.value || '',
+      hra: form.elements['hra']?.value || '',
+      lta: form.elements['lta']?.value || '',
+      homeLoanInterest: form.elements['home-loan-interest']?.value || '',
+      otherDeductions: form.elements['other-deductions']?.value || '',
+    },
+
     financialYear: form.elements['financial-year']?.value || '',
     taxRegime: getSelectedRegime() || DEFAULT_REGIME,  // TAX-009: Include regime
   };
@@ -87,9 +124,9 @@ export function initializeFormHandlers(form) {
 }
 
 /**
- * Gets form data from form elements
+ * Gets form data from form elements (TAX-010 extended)
  * @param {HTMLFormElement} form - The form element
- * @returns {Object} Form data object with all income types and regime
+ * @returns {Object} Form data object with all income types, deductions, and regime
  */
 export function getFormData(form) {
   if (!form) {
@@ -99,32 +136,80 @@ export function getFormData(form) {
       business: '',
       capitalGains: '',
       otherIncome: '',
+      stcgEquity: '',
+      stcgOther: '',
+      ltcgEquity: '',
+      ltcgOther: '',
+      speculativeGains: '',
+      speculativeLosses: '',
+      fnoGains: '',
+      fnoLosses: '',
+      interestIncome: '',
+      dividendIncome: '',
+      otherTaxable: '',
+      deductions: {},
       financialYear: '',
       taxRegime: DEFAULT_REGIME,
     };
   }
 
   return {
+    // Basic income
     salary: form.elements['salary']?.value || '',
     houseProperty: form.elements['house-property']?.value || '',
     business: form.elements['business-income']?.value || '',
     capitalGains: form.elements['capital-gains']?.value || '',
     otherIncome: form.elements['other-income']?.value || '',
+
+    // TAX-010: Granular capital gains
+    stcgEquity: form.elements['stcg-equity']?.value || '',
+    stcgOther: form.elements['stcg-other']?.value || '',
+    ltcgEquity: form.elements['ltcg-equity']?.value || '',
+    ltcgOther: form.elements['ltcg-other']?.value || '',
+
+    // TAX-010: Trading income
+    speculativeGains: form.elements['speculative-gains']?.value || '',
+    speculativeLosses: form.elements['speculative-losses']?.value || '',
+    fnoGains: form.elements['fno-gains']?.value || '',
+    fnoLosses: form.elements['fno-losses']?.value || '',
+
+    // TAX-010: Expanded other income
+    interestIncome: form.elements['interest-income']?.value || '',
+    dividendIncome: form.elements['dividend-income']?.value || '',
+    otherTaxable: form.elements['other-taxable']?.value || '',
+
+    // TAX-010: Deductions
+    deductions: {
+      standardDeduction: form.elements['standard-deduction']?.value || '',
+      section80C: form.elements['section-80c']?.value || '',
+      section80CCD1B: form.elements['section-80ccd1b']?.value || '',
+      section80D: form.elements['section-80d']?.value || '',
+      section80E: form.elements['section-80e']?.value || '',
+      section80G: form.elements['section-80g']?.value || '',
+      section80TTA: form.elements['section-80tta']?.value || '',
+      section80TTB: form.elements['section-80ttb']?.value || '',
+      hra: form.elements['hra']?.value || '',
+      lta: form.elements['lta']?.value || '',
+      homeLoanInterest: form.elements['home-loan-interest']?.value || '',
+      otherDeductions: form.elements['other-deductions']?.value || '',
+    },
+
     financialYear: form.elements['financial-year']?.value || '',
     taxRegime: getSelectedRegime() || DEFAULT_REGIME,  // TAX-009
   };
 }
 
 /**
- * Sets form data to form elements
+ * Sets form data to form elements (TAX-010 extended)
  * @param {HTMLFormElement} form - The form element
- * @param {Object} data - Data object with all income fields
+ * @param {Object} data - Data object with all income and deduction fields
  */
 export function setFormData(form, data) {
   if (!form || !data) {
     return;
   }
 
+  // Basic income fields
   if (form.elements['salary']) {
     form.elements['salary'].value = data.salary || '';
   }
@@ -143,6 +228,84 @@ export function setFormData(form, data) {
 
   if (form.elements['other-income']) {
     form.elements['other-income'].value = data.otherIncome || '';
+  }
+
+  // TAX-010: Granular capital gains
+  if (form.elements['stcg-equity']) {
+    form.elements['stcg-equity'].value = data.stcgEquity || '';
+  }
+  if (form.elements['stcg-other']) {
+    form.elements['stcg-other'].value = data.stcgOther || '';
+  }
+  if (form.elements['ltcg-equity']) {
+    form.elements['ltcg-equity'].value = data.ltcgEquity || '';
+  }
+  if (form.elements['ltcg-other']) {
+    form.elements['ltcg-other'].value = data.ltcgOther || '';
+  }
+
+  // TAX-010: Trading income
+  if (form.elements['speculative-gains']) {
+    form.elements['speculative-gains'].value = data.speculativeGains || '';
+  }
+  if (form.elements['speculative-losses']) {
+    form.elements['speculative-losses'].value = data.speculativeLosses || '';
+  }
+  if (form.elements['fno-gains']) {
+    form.elements['fno-gains'].value = data.fnoGains || '';
+  }
+  if (form.elements['fno-losses']) {
+    form.elements['fno-losses'].value = data.fnoLosses || '';
+  }
+
+  // TAX-010: Expanded other income
+  if (form.elements['interest-income']) {
+    form.elements['interest-income'].value = data.interestIncome || '';
+  }
+  if (form.elements['dividend-income']) {
+    form.elements['dividend-income'].value = data.dividendIncome || '';
+  }
+  if (form.elements['other-taxable']) {
+    form.elements['other-taxable'].value = data.otherTaxable || '';
+  }
+
+  // TAX-010: Deductions
+  const deductions = data.deductions || {};
+  if (form.elements['standard-deduction']) {
+    form.elements['standard-deduction'].value = deductions.standardDeduction || '';
+  }
+  if (form.elements['section-80c']) {
+    form.elements['section-80c'].value = deductions.section80C || '';
+  }
+  if (form.elements['section-80ccd1b']) {
+    form.elements['section-80ccd1b'].value = deductions.section80CCD1B || '';
+  }
+  if (form.elements['section-80d']) {
+    form.elements['section-80d'].value = deductions.section80D || '';
+  }
+  if (form.elements['section-80e']) {
+    form.elements['section-80e'].value = deductions.section80E || '';
+  }
+  if (form.elements['section-80g']) {
+    form.elements['section-80g'].value = deductions.section80G || '';
+  }
+  if (form.elements['section-80tta']) {
+    form.elements['section-80tta'].value = deductions.section80TTA || '';
+  }
+  if (form.elements['section-80ttb']) {
+    form.elements['section-80ttb'].value = deductions.section80TTB || '';
+  }
+  if (form.elements['hra']) {
+    form.elements['hra'].value = deductions.hra || '';
+  }
+  if (form.elements['lta']) {
+    form.elements['lta'].value = deductions.lta || '';
+  }
+  if (form.elements['home-loan-interest']) {
+    form.elements['home-loan-interest'].value = deductions.homeLoanInterest || '';
+  }
+  if (form.elements['other-deductions']) {
+    form.elements['other-deductions'].value = deductions.otherDeductions || '';
   }
 
   if (form.elements['financial-year']) {

@@ -14,23 +14,57 @@ import { REGIMES } from '../../shared/constants/regimes.js';
  * Field applicability configuration for FY 2024-25
  *
  * Income fields (TAX-004 to TAX-008) are applicable to BOTH regimes.
- * Deduction fields will be added in TAX-010 with regime-specific applicability.
+ * TAX-010: Added granular capital gains, trading income, other income, and deductions.
  *
  * @type {Object}
  */
 const FIELD_APPLICABILITY_FY_2024_25 = Object.freeze({
-  // Income fields - applicable to both regimes
+  // === Legacy Income fields - kept for backward compatibility ===
   salary: { old: true, new: true },
   houseProperty: { old: true, new: true },
   business: { old: true, new: true },
-  capitalGains: { old: true, new: true },
-  otherIncome: { old: true, new: true },
+  capitalGains: { old: true, new: true },  // Legacy single field
+  otherIncome: { old: true, new: true },   // Legacy single field
 
-  // Future deduction fields (TAX-010) will be added here with regime-specific applicability
-  // section80C: { old: true, new: false },
-  // section80D: { old: true, new: false },
-  // hra: { old: true, new: false },
-  // standardDeduction: { old: true, new: true },
+  // === TAX-010: Granular Capital Gains ===
+  stcgEquity: { old: true, new: true },    // STCG on listed equity
+  stcgOther: { old: true, new: true },     // STCG on other assets
+  ltcgEquity: { old: true, new: true },    // LTCG on listed equity
+  ltcgOther: { old: true, new: true },     // LTCG on other assets
+
+  // === TAX-010: Trading Income (Speculative & F&O) ===
+  speculativeGains: { old: true, new: true },
+  speculativeLosses: { old: true, new: true },
+  fnoGains: { old: true, new: true },
+  fnoLosses: { old: true, new: true },
+
+  // === TAX-010: Expanded Other Income ===
+  interestIncome: { old: true, new: true },
+  dividendIncome: { old: true, new: true },
+  otherTaxable: { old: true, new: true },
+
+  // === TAX-010: Deductions - Regime-specific applicability ===
+  // Standard deduction applies to BOTH regimes (different amounts)
+  standardDeduction: { old: true, new: true },
+
+  // Chapter VI-A deductions - OLD REGIME ONLY
+  section80C: { old: true, new: false },
+  section80CCD1B: { old: true, new: false },
+  section80D: { old: true, new: false },
+  section80E: { old: true, new: false },
+  section80G: { old: true, new: false },
+  section80TTA: { old: true, new: false },
+  section80TTB: { old: true, new: false },
+
+  // Exemptions - OLD REGIME ONLY
+  hra: { old: true, new: false },
+  lta: { old: true, new: false },
+
+  // Home Loan Interest (Section 24b) - OLD REGIME ONLY
+  homeLoanInterest: { old: true, new: false },
+
+  // Other deductions - OLD REGIME ONLY
+  otherDeductions: { old: true, new: false },
 });
 
 /**

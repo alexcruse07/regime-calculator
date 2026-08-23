@@ -232,7 +232,6 @@ This project uses an AI-native development approach with specialized agents:
 | **Planner** | Creates implementation plans |
 | **Developer** | Implements features |
 | **Tester** | Validates with tests |
-| **Reviewer** | Reviews code quality |
 | **Builder** | Creates production builds |
 | **Deployer** | Handles AWS deployment |
 

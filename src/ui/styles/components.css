@@ -426,3 +426,153 @@
   }
 }
 
+/* ==========================================================================
+   TAX-010: Collapsible Section Styles
+   ========================================================================== */
+
+/* Collapsible Section Container */
+.collapsible-section {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0;
+  margin: 1rem 0;
+  background-color: #fafafa;
+}
+
+.collapsible-section legend {
+  background-color: #f5f5f5;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  margin: 0;
+  border-radius: 7px 7px 0 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #444;
+  transition: background-color 0.2s ease;
+  user-select: none;
+}
+
+.collapsible-section legend:hover {
+  background-color: #e8e8e8;
+}
+
+.collapsible-section legend:focus {
+  outline: 2px solid #667eea;
+  outline-offset: -2px;
+}
+
+/* Toggle Icon */
+.toggle-icon {
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+
+.collapsible-section[data-collapsed="true"] .toggle-icon {
+  transform: rotate(-90deg);
+}
+
+/* Section Content */
+.section-content {
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+  background-color: white;
+  border-radius: 0 0 7px 7px;
+}
+
+.collapsible-section[data-collapsed="true"] .section-content {
+  display: none;
+}
+
+/* Regime Indicator */
+.regime-indicator {
+  font-size: 0.75rem;
+  font-weight: normal;
+  color: #888;
+  margin-left: auto;
+}
+
+/* Deductions Section Specific Styles */
+.deductions-section {
+  border-color: #d0d0e8;
+  background-color: #f8f8ff;
+}
+
+.deductions-section legend {
+  background-color: #eeeef5;
+}
+
+.deductions-section legend:hover {
+  background-color: #e0e0f0;
+}
+
+/* Hidden field within collapsible section */
+.collapsible-section .form-group.field-hidden {
+  display: none;
+}
+
+/* Deduction Input Styles */
+.form-group[data-field^="section80"],
+.form-group[data-field="standardDeduction"],
+.form-group[data-field="hra"],
+.form-group[data-field="lta"],
+.form-group[data-field="homeLoanInterest"],
+.form-group[data-field="otherDeductions"] {
+  position: relative;
+}
+
+/* Limit indicator for deduction fields */
+.form-group .limit-indicator {
+  font-size: 0.75rem;
+  color: #888;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.form-group .limit-warning {
+  color: #e67e22;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+/* Form Help Text */
+.form-help {
+  font-size: 0.8rem;
+  color: #777;
+  margin-top: 0.25rem;
+}
+
+/* Responsive Design for Collapsible Sections */
+@media (max-width: 768px) {
+  .collapsible-section {
+    margin: 0.75rem 0;
+  }
+
+  .collapsible-section legend {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .section-content {
+    padding: 0.75rem;
+  }
+
+  .regime-indicator {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .collapsible-section legend {
+    flex-wrap: wrap;
+  }
+
+  .toggle-icon {
+    font-size: 0.65rem;
+  }
+}

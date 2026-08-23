@@ -1,6 +1,6 @@
 # Development Workflow
 
-This project uses an AI-native workflow where human requirements are refined into plans, implemented, tested, reviewed, built, and deployed in a controlled sequence.
+This project uses an AI-native workflow where human requirements are refined into plans, implemented, tested, built, and deployed in a controlled sequence.
 
 ## Workflow
 
@@ -10,12 +10,11 @@ This project uses an AI-native workflow where human requirements are refined int
 4. The human reviews the plan when appropriate.
 5. The Developer implements the approved plan.
 6. The Tester validates the implementation.
-7. The Reviewer independently reviews the implementation.
-8. The Developer fixes issues found by Tester or Reviewer.
-9. The Tester retests the changes.
-10. The Builder creates and verifies the production build.
-11. The Deployer deploys the validated static build.
-12. The deployment is verified.
+7. The Developer fixes issues found by Tester.
+8. The Tester retests the changes.
+9. The Builder creates and verifies the production build.
+10. The Deployer deploys the validated static build.
+11. The deployment is verified.
 
 ## Workflow Diagram
 
@@ -36,11 +35,6 @@ Developer
     |
     v
 Tester
-    |
-    +---- FAIL ----> Developer
-    |
-    v
-Reviewer
     |
     +---- FAIL ----> Developer
     |
@@ -86,12 +80,6 @@ AWS
 - Reports failures honestly.
 - Identifies missing tests.
 
-### Reviewer
-
-- Performs an independent review.
-- Checks correctness, architecture, security, accessibility, testing, performance, and duplication.
-- Classifies findings by severity.
-
 ### Builder
 
 - Verifies the project can be built and packaged for production.
@@ -123,7 +111,6 @@ Agents must stay within their role:
 - The Planner does not implement code.
 - The Developer does not silently change requirements.
 - The Tester does not hide failures.
-- The Reviewer does not modify code automatically.
 - The Builder does not deploy.
 - The Deployer does not deploy unvalidated builds.
 - The Orchestrator coordinates, but does not replace specialized agents.

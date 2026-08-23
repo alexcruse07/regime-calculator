@@ -2,16 +2,19 @@
  * Input Validators
  * Functions to validate user input before processing
  *
- * Income Sources (TAX-004 through TAX-008):
+ * Income Sources (TAX-004 through TAX-008, TAX-010):
  * - salary: Salary income (TAX-004) - must be non-negative
  * - houseProperty: House property income/loss (TAX-005) - can be negative
  * - business: Business/professional income (TAX-006) - must be non-negative
- * - capitalGains: Capital gains (TAX-007) - must be non-negative
- * - otherIncome: Other income (TAX-008) - must be non-negative
+ * - capitalGains: Capital gains (TAX-007/TAX-010) - granular breakdown
+ * - otherIncome: Other income (TAX-008/TAX-010) - expanded breakdown
+ * - tradingIncome: Speculative and F&O (TAX-010)
+ * - deductions: All Chapter VI-A deductions (TAX-010)
  */
 
 import { isSupportedYear } from '../../shared/constants/financial-years.js';
 import { normalizeFinancialYear } from '../input-normalization/normalizers.js';
+import { getDeductionLimit, exceedsDeductionLimit } from '../../domain/rules/deduction-limits.js';
 
 /**
  * Validates a numeric income value
@@ -181,18 +184,36 @@ export function validateIncomeInput(input) {
 }
 
 /**
- * Validates a single income field
+ * Validates a single income field (TAX-010 extended)
  * @param {string} fieldName - Name of the field
  * @param {*} value - Value to validate
  * @returns {Object} Validation result { isValid: boolean, error: string|null }
  */
 export function validateIncomeField(fieldName, value) {
   const fieldConfig = {
+    // Basic income fields
     salary: { displayName: 'Salary', allowNegative: false },
     houseProperty: { displayName: 'House property income', allowNegative: true },
     business: { displayName: 'Business income', allowNegative: false },
     capitalGains: { displayName: 'Capital gains', allowNegative: false },
     otherIncome: { displayName: 'Other income', allowNegative: false },
+
+    // TAX-010: Granular capital gains
+    stcgEquity: { displayName: 'STCG (Listed Equity)', allowNegative: false },
+    stcgOther: { displayName: 'STCG (Other Assets)', allowNegative: false },
+    ltcgEquity: { displayName: 'LTCG (Listed Equity)', allowNegative: false },
+    ltcgOther: { displayName: 'LTCG (Other Assets)', allowNegative: false },
+
+    // TAX-010: Trading income
+    speculativeGains: { displayName: 'Speculative Gains', allowNegative: false },
+    speculativeLosses: { displayName: 'Speculative Losses', allowNegative: false },
+    fnoGains: { displayName: 'F&O Gains', allowNegative: false },
+    fnoLosses: { displayName: 'F&O Losses', allowNegative: false },
+
+    // TAX-010: Expanded other income
+    interestIncome: { displayName: 'Interest Income', allowNegative: false },
+    dividendIncome: { displayName: 'Dividend Income', allowNegative: false },
+    otherTaxable: { displayName: 'Other Taxable Income', allowNegative: false },
   };
 
   const config = fieldConfig[fieldName] || { displayName: fieldName, allowNegative: false };
@@ -201,19 +222,138 @@ export function validateIncomeField(fieldName, value) {
 }
 
 /**
- * Validates user form submission with all income types
+ * Validates a single deduction field (TAX-010)
+ * @param {string} fieldName - Name of the deduction field
+ * @param {*} value - Value to validate
+ * @param {string} financialYear - Financial year for limit checking
+ * @returns {Object} Validation result { isValid: boolean, error: string|null, warning: string|null }
+ */
+export function validateDeductionField(fieldName, value, financialYear = '2024-25') {
+  const fieldConfig = {
+    standardDeduction: { displayName: 'Standard Deduction' },
+    section80C: { displayName: 'Section 80C' },
+    section80CCD1B: { displayName: 'Section 80CCD(1B)' },
+    section80D: { displayName: 'Section 80D' },
+    section80E: { displayName: 'Section 80E' },
+    section80G: { displayName: 'Section 80G' },
+    section80TTA: { displayName: 'Section 80TTA' },
+    section80TTB: { displayName: 'Section 80TTB' },
+    hra: { displayName: 'HRA Exemption' },
+    lta: { displayName: 'LTA Exemption' },
+    homeLoanInterest: { displayName: 'Home Loan Interest' },
+    otherDeductions: { displayName: 'Other Deductions' },
+  };
+
+  const config = fieldConfig[fieldName] || { displayName: fieldName };
+
+  // First validate it's a valid non-negative number
+  const numericValidation = validateNumericIncome(value, config.displayName, { allowNegative: false, allowEmpty: true });
+
+  if (!numericValidation.isValid) {
+    return { ...numericValidation, warning: null };
+  }
+
+  // Check if value exceeds statutory limit
+  const numValue = parseFloat(value) || 0;
+  let warning = null;
+
+  if (numValue > 0 && exceedsDeductionLimit(fieldName, numValue, financialYear)) {
+    const limit = getDeductionLimit(fieldName, financialYear);
+    if (limit !== Infinity) {
+      warning = `${config.displayName} exceeds limit of ₹${limit.toLocaleString('en-IN')}. Will be capped.`;
+    }
+  }
+
+  return {
+    isValid: true,
+    error: null,
+    warning,
+  };
+}
+
+/**
+ * Validates all deduction fields (TAX-010)
+ * @param {Object} deductions - Deductions object
+ * @param {string} financialYear - Financial year
+ * @returns {Object} Validation result with field-specific errors and warnings
+ */
+export function validateDeductions(deductions, financialYear = '2024-25') {
+  const errors = {};
+  const warnings = {};
+
+  if (!deductions || typeof deductions !== 'object') {
+    return {
+      isValid: true, // Empty deductions are valid
+      errors: {},
+      warnings: {},
+    };
+  }
+
+  const deductionFields = [
+    'standardDeduction', 'section80C', 'section80CCD1B', 'section80D',
+    'section80E', 'section80G', 'section80TTA', 'section80TTB',
+    'hra', 'lta', 'homeLoanInterest', 'otherDeductions',
+  ];
+
+  for (const field of deductionFields) {
+    const result = validateDeductionField(field, deductions[field], financialYear);
+
+    if (!result.isValid) {
+      errors[field] = result.error;
+    }
+
+    if (result.warning) {
+      warnings[field] = result.warning;
+    }
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors,
+    warnings,
+  };
+}
+
+/**
+ * Validates user form submission with all income types and deductions (TAX-010 extended)
  * @param {Object} formData - Form data object
  * @returns {Object} Complete validation result with organized errors
  */
 export function validateFormSubmission(formData) {
   const errors = {
+    // Basic income
     salary: null,
     houseProperty: null,
     business: null,
     capitalGains: null,
     otherIncome: null,
+
+    // TAX-010: Granular capital gains
+    stcgEquity: null,
+    stcgOther: null,
+    ltcgEquity: null,
+    ltcgOther: null,
+
+    // TAX-010: Trading income
+    speculativeGains: null,
+    speculativeLosses: null,
+    fnoGains: null,
+    fnoLosses: null,
+
+    // TAX-010: Expanded other income
+    interestIncome: null,
+    dividendIncome: null,
+    otherTaxable: null,
+
+    // TAX-010: Deductions
+    deductions: {},
+
     financialYear: null,
     general: [],
+  };
+
+  const warnings = {
+    deductions: {},
   };
 
   if (!formData || typeof formData !== 'object') {
@@ -221,38 +361,60 @@ export function validateFormSubmission(formData) {
     return {
       isValid: false,
       errors,
+      warnings,
     };
   }
 
-  // Validate individual fields
-  const salaryVal = validateIncomeField('salary', formData.salary);
-  if (!salaryVal.isValid) {
-    errors.salary = salaryVal.error;
+  // Validate basic income fields
+  const basicIncomeFields = ['salary', 'houseProperty', 'business', 'capitalGains', 'otherIncome'];
+  const basicValidations = {};
+
+  for (const field of basicIncomeFields) {
+    const validation = validateIncomeField(field, formData[field]);
+    basicValidations[field] = validation;
+    if (!validation.isValid) {
+      errors[field] = validation.error;
+    }
   }
 
-  const housePropertyVal = validateIncomeField('houseProperty', formData.houseProperty);
-  if (!housePropertyVal.isValid) {
-    errors.houseProperty = housePropertyVal.error;
+  // Validate granular capital gains (TAX-010)
+  const capitalGainsFields = ['stcgEquity', 'stcgOther', 'ltcgEquity', 'ltcgOther'];
+  for (const field of capitalGainsFields) {
+    const validation = validateIncomeField(field, formData[field]);
+    if (!validation.isValid) {
+      errors[field] = validation.error;
+    }
   }
 
-  const businessVal = validateIncomeField('business', formData.business);
-  if (!businessVal.isValid) {
-    errors.business = businessVal.error;
+  // Validate trading income (TAX-010)
+  const tradingFields = ['speculativeGains', 'speculativeLosses', 'fnoGains', 'fnoLosses'];
+  for (const field of tradingFields) {
+    const validation = validateIncomeField(field, formData[field]);
+    if (!validation.isValid) {
+      errors[field] = validation.error;
+    }
   }
 
-  const capitalGainsVal = validateIncomeField('capitalGains', formData.capitalGains);
-  if (!capitalGainsVal.isValid) {
-    errors.capitalGains = capitalGainsVal.error;
+  // Validate expanded other income (TAX-010)
+  const otherIncomeFields = ['interestIncome', 'dividendIncome', 'otherTaxable'];
+  for (const field of otherIncomeFields) {
+    const validation = validateIncomeField(field, formData[field]);
+    if (!validation.isValid) {
+      errors[field] = validation.error;
+    }
   }
 
-  const otherIncomeVal = validateIncomeField('otherIncome', formData.otherIncome);
-  if (!otherIncomeVal.isValid) {
-    errors.otherIncome = otherIncomeVal.error;
-  }
-
+  // Validate financial year
   const yearVal = validateFinancialYear(formData.financialYear);
   if (!yearVal.isValid) {
     errors.financialYear = yearVal.error;
+  }
+
+  // Validate deductions if present (TAX-010)
+  if (formData.deductions) {
+    const deductionValidation = validateDeductions(formData.deductions, formData.financialYear || '2024-25');
+    errors.deductions = deductionValidation.errors;
+    warnings.deductions = deductionValidation.warnings;
   }
 
   // Check overall constraints - at least one positive income required
@@ -262,12 +424,24 @@ export function validateFormSubmission(formData) {
   const capitalGains = parseFloat(formData.capitalGains) || 0;
   const otherIncome = parseFloat(formData.otherIncome) || 0;
 
-  const allFieldsValid = salaryVal.isValid && housePropertyVal.isValid && businessVal.isValid &&
-                         capitalGainsVal.isValid && otherIncomeVal.isValid;
+  // Also check granular fields for positive income
+  const stcgEquity = parseFloat(formData.stcgEquity) || 0;
+  const stcgOther = parseFloat(formData.stcgOther) || 0;
+  const ltcgEquity = parseFloat(formData.ltcgEquity) || 0;
+  const ltcgOther = parseFloat(formData.ltcgOther) || 0;
+  const speculativeGains = parseFloat(formData.speculativeGains) || 0;
+  const fnoGains = parseFloat(formData.fnoGains) || 0;
+  const interestIncome = parseFloat(formData.interestIncome) || 0;
+  const dividendIncome = parseFloat(formData.dividendIncome) || 0;
+  const otherTaxable = parseFloat(formData.otherTaxable) || 0;
 
-  const totalPositiveIncome = salary + Math.max(0, houseProperty) + business + capitalGains + otherIncome;
+  const allBasicFieldsValid = Object.values(basicValidations).every(v => v.isValid);
 
-  if (allFieldsValid && totalPositiveIncome === 0 && houseProperty >= 0) {
+  const totalPositiveIncome = salary + Math.max(0, houseProperty) + business + capitalGains + otherIncome +
+    stcgEquity + stcgOther + ltcgEquity + ltcgOther + speculativeGains + fnoGains +
+    interestIncome + dividendIncome + otherTaxable;
+
+  if (allBasicFieldsValid && totalPositiveIncome === 0 && houseProperty >= 0) {
     errors.general.push('At least one income value must be greater than zero');
   }
 
@@ -277,11 +451,24 @@ export function validateFormSubmission(formData) {
     errors.business ||
     errors.capitalGains ||
     errors.otherIncome ||
+    errors.stcgEquity ||
+    errors.stcgOther ||
+    errors.ltcgEquity ||
+    errors.ltcgOther ||
+    errors.speculativeGains ||
+    errors.speculativeLosses ||
+    errors.fnoGains ||
+    errors.fnoLosses ||
+    errors.interestIncome ||
+    errors.dividendIncome ||
+    errors.otherTaxable ||
     errors.financialYear ||
+    Object.keys(errors.deductions).length > 0 ||
     errors.general.length > 0;
 
   return {
     isValid: !hasErrors,
     errors,
+    warnings,
   };
 }

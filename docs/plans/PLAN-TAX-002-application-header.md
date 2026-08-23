@@ -95,10 +95,6 @@ getHeaderFinancialYear() → string | null
 
 Developer Agent
 
-## Reviewed By
-
-Reviewer Agent
-
 ## Date
 
 2026-08-23

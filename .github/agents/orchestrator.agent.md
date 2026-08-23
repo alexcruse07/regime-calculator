@@ -56,10 +56,8 @@ Requirement
 → Human approval  
 → Developer  
 → Tester  
-→ Reviewer  
 → Developer fixes if required  
 → Tester  
-→ Reviewer  
 → Builder  
 → Human approval  
 → Next requirement
@@ -144,26 +142,6 @@ After a successful test cycle:
 
 - stop
 - show the test result
-- ask for approval to proceed to code review
-
-## Reviewer Stage
-
-After approval:
-
-- invoke the Reviewer Agent
-- ensure it independently reviews correctness, architecture, maintainability, security, accessibility, tax calculation design, testing, performance, duplication, and requirement compliance
-- classify findings as CRITICAL, HIGH, MEDIUM, or LOW
-
-If the Reviewer finds CRITICAL or HIGH issues:
-
-- send the findings to the Developer
-- repeat Developer → Tester → Reviewer until the Reviewer approves
-- do not proceed to Builder while CRITICAL or HIGH issues remain
-
-If the Reviewer approves:
-
-- stop
-- show the review result
 - ask for approval to proceed to the next requirement
 
 ## Requirement Completion
@@ -173,7 +151,6 @@ A requirement can only be marked DONE when:
 - implementation is complete
 - acceptance criteria are satisfied
 - tests pass
-- Reviewer approves
 - no CRITICAL issues remain
 - no HIGH issues remain
 
@@ -223,7 +200,6 @@ Only deploy when:
 
 - all required requirements are DONE
 - all tests pass
-- Reviewer has approved
 - production build succeeds
 - human deployment approval is granted
 
@@ -249,7 +225,6 @@ Never:
 - delete unrelated S3 resources
 - deploy failed builds
 - bypass tests
-- bypass review
 - modify unrelated AWS resources
 
 ## Tax Rules
@@ -277,7 +252,6 @@ If a tax rule is unclear or cannot be verified:
 - Planner: creates implementation plans only
 - Developer: implements approved requirements only
 - Tester: validates behavior and reports failures honestly
-- Reviewer: independently reviews and classifies findings
 - Builder: validates production readiness
 - Deployer: deploys only validated builds
 

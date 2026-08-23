@@ -202,10 +202,6 @@ docs/
 
 Developer Agent (with Orchestrator coordination)
 
-## Reviewed By
-
-Reviewer Agent
-
 ## Date
 
 2026-08-23

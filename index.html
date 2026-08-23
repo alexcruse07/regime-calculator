@@ -104,8 +104,8 @@
               <small id="business-income-help" class="form-help">Income from business or profession</small>
             </div>
 
-            <!-- TAX-007: Capital Gains Input -->
-            <div class="form-group" data-field="capitalGains">
+            <!-- TAX-007: Capital Gains Input (Legacy - hidden, used for backward compatibility) -->
+            <div class="form-group" data-field="capitalGains" style="display: none;">
               <label for="capital-gains">Capital Gains (₹):</label>
               <input 
                 type="number" 
@@ -119,8 +119,136 @@
               <small id="capital-gains-help" class="form-help">Total capital gains (taxed separately if applicable)</small>
             </div>
 
-            <!-- TAX-008: Other Income Input -->
-            <div class="form-group" data-field="otherIncome">
+            <!-- TAX-010: Granular Capital Gains Section -->
+            <fieldset class="collapsible-section" id="capital-gains-section">
+              <legend class="section-toggle" aria-expanded="true" aria-controls="capital-gains-content">
+                <span class="toggle-icon">▼</span> Capital Gains
+              </legend>
+              <div class="section-content" id="capital-gains-content">
+                <div class="form-group" data-field="stcgEquity">
+                  <label for="stcg-equity">STCG - Listed Equity (₹):</label>
+                  <input 
+                    type="number" 
+                    id="stcg-equity" 
+                    name="stcg-equity" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="stcg-equity-help"
+                  >
+                  <small id="stcg-equity-help" class="form-help">Short-term capital gains on listed equity (15% rate)</small>
+                </div>
+
+                <div class="form-group" data-field="stcgOther">
+                  <label for="stcg-other">STCG - Other Assets (₹):</label>
+                  <input 
+                    type="number" 
+                    id="stcg-other" 
+                    name="stcg-other" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="stcg-other-help"
+                  >
+                  <small id="stcg-other-help" class="form-help">Short-term capital gains on other assets (slab rates)</small>
+                </div>
+
+                <div class="form-group" data-field="ltcgEquity">
+                  <label for="ltcg-equity">LTCG - Listed Equity (₹):</label>
+                  <input 
+                    type="number" 
+                    id="ltcg-equity" 
+                    name="ltcg-equity" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="ltcg-equity-help"
+                  >
+                  <small id="ltcg-equity-help" class="form-help">Long-term capital gains on listed equity (10% above ₹1L)</small>
+                </div>
+
+                <div class="form-group" data-field="ltcgOther">
+                  <label for="ltcg-other">LTCG - Other Assets (₹):</label>
+                  <input 
+                    type="number" 
+                    id="ltcg-other" 
+                    name="ltcg-other" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="ltcg-other-help"
+                  >
+                  <small id="ltcg-other-help" class="form-help">Long-term capital gains on other assets (20% with indexation)</small>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- TAX-010: Trading Income Section -->
+            <fieldset class="collapsible-section" id="trading-income-section">
+              <legend class="section-toggle" aria-expanded="true" aria-controls="trading-income-content">
+                <span class="toggle-icon">▼</span> Trading Income
+              </legend>
+              <div class="section-content" id="trading-income-content">
+                <div class="form-group" data-field="speculativeGains">
+                  <label for="speculative-gains">Speculative Gains (₹):</label>
+                  <input 
+                    type="number" 
+                    id="speculative-gains" 
+                    name="speculative-gains" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="speculative-gains-help"
+                  >
+                  <small id="speculative-gains-help" class="form-help">Intraday trading profits</small>
+                </div>
+
+                <div class="form-group" data-field="speculativeLosses">
+                  <label for="speculative-losses">Speculative Losses (₹):</label>
+                  <input 
+                    type="number" 
+                    id="speculative-losses" 
+                    name="speculative-losses" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="speculative-losses-help"
+                  >
+                  <small id="speculative-losses-help" class="form-help">Intraday trading losses</small>
+                </div>
+
+                <div class="form-group" data-field="fnoGains">
+                  <label for="fno-gains">F&O Gains (₹):</label>
+                  <input 
+                    type="number" 
+                    id="fno-gains" 
+                    name="fno-gains" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="fno-gains-help"
+                  >
+                  <small id="fno-gains-help" class="form-help">Futures & Options trading profits</small>
+                </div>
+
+                <div class="form-group" data-field="fnoLosses">
+                  <label for="fno-losses">F&O Losses (₹):</label>
+                  <input 
+                    type="number" 
+                    id="fno-losses" 
+                    name="fno-losses" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="fno-losses-help"
+                  >
+                  <small id="fno-losses-help" class="form-help">Futures & Options trading losses</small>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- TAX-008: Other Income Input (Legacy - hidden) -->
+            <div class="form-group" data-field="otherIncome" style="display: none;">
               <label for="other-income">Other Income (₹):</label>
               <input 
                 type="number" 
@@ -133,6 +261,239 @@
               >
               <small id="other-income-help" class="form-help">Interest, dividends, and other taxable income</small>
             </div>
+
+            <!-- TAX-010: Expanded Other Income Section -->
+            <fieldset class="collapsible-section" id="other-income-section">
+              <legend class="section-toggle" aria-expanded="true" aria-controls="other-income-content">
+                <span class="toggle-icon">▼</span> Other Income
+              </legend>
+              <div class="section-content" id="other-income-content">
+                <div class="form-group" data-field="interestIncome">
+                  <label for="interest-income">Interest Income (₹):</label>
+                  <input 
+                    type="number" 
+                    id="interest-income" 
+                    name="interest-income" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="interest-income-help"
+                  >
+                  <small id="interest-income-help" class="form-help">Savings account, FD, RD interest</small>
+                </div>
+
+                <div class="form-group" data-field="dividendIncome">
+                  <label for="dividend-income">Dividend Income (₹):</label>
+                  <input 
+                    type="number" 
+                    id="dividend-income" 
+                    name="dividend-income" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="dividend-income-help"
+                  >
+                  <small id="dividend-income-help" class="form-help">Dividends from stocks and mutual funds</small>
+                </div>
+
+                <div class="form-group" data-field="otherTaxable">
+                  <label for="other-taxable">Other Taxable Income (₹):</label>
+                  <input 
+                    type="number" 
+                    id="other-taxable" 
+                    name="other-taxable" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="other-taxable-help"
+                  >
+                  <small id="other-taxable-help" class="form-help">Gifts, lottery, or other taxable income</small>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- TAX-010: Deductions Section -->
+            <fieldset class="collapsible-section deductions-section" id="deductions-section">
+              <legend class="section-toggle" aria-expanded="true" aria-controls="deductions-content">
+                <span class="toggle-icon">▼</span> Deductions
+                <span class="regime-indicator">(Old Regime benefits from most deductions)</span>
+              </legend>
+              <div class="section-content" id="deductions-content">
+                <div class="form-group" data-field="standardDeduction">
+                  <label for="standard-deduction">Standard Deduction (₹):</label>
+                  <input 
+                    type="number" 
+                    id="standard-deduction" 
+                    name="standard-deduction" 
+                    placeholder="Auto-applied"
+                    min="0"
+                    step="1"
+                    aria-describedby="standard-deduction-help"
+                  >
+                  <small id="standard-deduction-help" class="form-help">₹50,000 (Old) / ₹75,000 (New) - Auto-applied for salaried</small>
+                </div>
+
+                <div class="form-group" data-field="section80C">
+                  <label for="section-80c">Section 80C (₹):</label>
+                  <input 
+                    type="number" 
+                    id="section-80c" 
+                    name="section-80c" 
+                    placeholder="0"
+                    min="0"
+                    max="150000"
+                    step="1"
+                    aria-describedby="section-80c-help"
+                  >
+                  <small id="section-80c-help" class="form-help">PPF, ELSS, LIC, etc. (Max ₹1,50,000)</small>
+                </div>
+
+                <div class="form-group" data-field="section80CCD1B">
+                  <label for="section-80ccd1b">Section 80CCD(1B) (₹):</label>
+                  <input 
+                    type="number" 
+                    id="section-80ccd1b" 
+                    name="section-80ccd1b" 
+                    placeholder="0"
+                    min="0"
+                    max="50000"
+                    step="1"
+                    aria-describedby="section-80ccd1b-help"
+                  >
+                  <small id="section-80ccd1b-help" class="form-help">Additional NPS contribution (Max ₹50,000)</small>
+                </div>
+
+                <div class="form-group" data-field="section80D">
+                  <label for="section-80d">Section 80D (₹):</label>
+                  <input 
+                    type="number" 
+                    id="section-80d" 
+                    name="section-80d" 
+                    placeholder="0"
+                    min="0"
+                    max="100000"
+                    step="1"
+                    aria-describedby="section-80d-help"
+                  >
+                  <small id="section-80d-help" class="form-help">Medical insurance premium (Max ₹25,000/₹50,000)</small>
+                </div>
+
+                <div class="form-group" data-field="section80E">
+                  <label for="section-80e">Section 80E (₹):</label>
+                  <input 
+                    type="number" 
+                    id="section-80e" 
+                    name="section-80e" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="section-80e-help"
+                  >
+                  <small id="section-80e-help" class="form-help">Education loan interest (No limit)</small>
+                </div>
+
+                <div class="form-group" data-field="section80G">
+                  <label for="section-80g">Section 80G (₹):</label>
+                  <input 
+                    type="number" 
+                    id="section-80g" 
+                    name="section-80g" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="section-80g-help"
+                  >
+                  <small id="section-80g-help" class="form-help">Donations to eligible charities (50%/100% eligible)</small>
+                </div>
+
+                <div class="form-group" data-field="section80TTA">
+                  <label for="section-80tta">Section 80TTA (₹):</label>
+                  <input 
+                    type="number" 
+                    id="section-80tta" 
+                    name="section-80tta" 
+                    placeholder="0"
+                    min="0"
+                    max="10000"
+                    step="1"
+                    aria-describedby="section-80tta-help"
+                  >
+                  <small id="section-80tta-help" class="form-help">Savings interest for non-seniors (Max ₹10,000)</small>
+                </div>
+
+                <div class="form-group" data-field="section80TTB">
+                  <label for="section-80ttb">Section 80TTB (₹):</label>
+                  <input 
+                    type="number" 
+                    id="section-80ttb" 
+                    name="section-80ttb" 
+                    placeholder="0"
+                    min="0"
+                    max="50000"
+                    step="1"
+                    aria-describedby="section-80ttb-help"
+                  >
+                  <small id="section-80ttb-help" class="form-help">Interest for senior citizens (Max ₹50,000)</small>
+                </div>
+
+                <div class="form-group" data-field="hra">
+                  <label for="hra">HRA Exemption (₹):</label>
+                  <input 
+                    type="number" 
+                    id="hra" 
+                    name="hra" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="hra-help"
+                  >
+                  <small id="hra-help" class="form-help">House Rent Allowance exemption</small>
+                </div>
+
+                <div class="form-group" data-field="lta">
+                  <label for="lta">LTA Exemption (₹):</label>
+                  <input 
+                    type="number" 
+                    id="lta" 
+                    name="lta" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="lta-help"
+                  >
+                  <small id="lta-help" class="form-help">Leave Travel Allowance exemption</small>
+                </div>
+
+                <div class="form-group" data-field="homeLoanInterest">
+                  <label for="home-loan-interest">Home Loan Interest (₹):</label>
+                  <input 
+                    type="number" 
+                    id="home-loan-interest" 
+                    name="home-loan-interest" 
+                    placeholder="0"
+                    min="0"
+                    max="200000"
+                    step="1"
+                    aria-describedby="home-loan-interest-help"
+                  >
+                  <small id="home-loan-interest-help" class="form-help">Section 24b - Self-occupied (Max ₹2,00,000)</small>
+                </div>
+
+                <div class="form-group" data-field="otherDeductions">
+                  <label for="other-deductions">Other Deductions (₹):</label>
+                  <input 
+                    type="number" 
+                    id="other-deductions" 
+                    name="other-deductions" 
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    aria-describedby="other-deductions-help"
+                  >
+                  <small id="other-deductions-help" class="form-help">Any other Chapter VI-A deductions</small>
+                </div>
+              </div>
+            </fieldset>
 
             <div class="form-actions">
               <button type="submit" class="btn btn-primary">Calculate Tax</button>

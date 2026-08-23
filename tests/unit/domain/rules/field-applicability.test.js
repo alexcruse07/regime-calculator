@@ -108,37 +108,51 @@ describe('Field Applicability Rules', () => {
     it('should return visibility map for compare mode', () => {
       const visibility = getFieldVisibility('compare', '2024-25');
 
-      expect(visibility).toEqual({
-        salary: true,
-        houseProperty: true,
-        business: true,
-        capitalGains: true,
-        otherIncome: true,
-      });
+      // Basic income fields
+      expect(visibility.salary).toBe(true);
+      expect(visibility.houseProperty).toBe(true);
+      expect(visibility.business).toBe(true);
+      expect(visibility.capitalGains).toBe(true);
+      expect(visibility.otherIncome).toBe(true);
+
+      // TAX-010: New fields should also be visible in compare mode
+      expect(visibility.stcgEquity).toBe(true);
+      expect(visibility.standardDeduction).toBe(true);
+      expect(visibility.section80C).toBe(true); // Old-regime only but visible in compare
     });
 
     it('should return visibility map for old regime', () => {
       const visibility = getFieldVisibility('old', '2024-25');
 
-      expect(visibility).toEqual({
-        salary: true,
-        houseProperty: true,
-        business: true,
-        capitalGains: true,
-        otherIncome: true,
-      });
+      // Basic income fields
+      expect(visibility.salary).toBe(true);
+      expect(visibility.houseProperty).toBe(true);
+      expect(visibility.business).toBe(true);
+      expect(visibility.capitalGains).toBe(true);
+      expect(visibility.otherIncome).toBe(true);
+
+      // TAX-010: Deductions should be visible in old regime
+      expect(visibility.standardDeduction).toBe(true);
+      expect(visibility.section80C).toBe(true);
+      expect(visibility.section80D).toBe(true);
+      expect(visibility.hra).toBe(true);
     });
 
     it('should return visibility map for new regime', () => {
       const visibility = getFieldVisibility('new', '2024-25');
 
-      expect(visibility).toEqual({
-        salary: true,
-        houseProperty: true,
-        business: true,
-        capitalGains: true,
-        otherIncome: true,
-      });
+      // Basic income fields visible
+      expect(visibility.salary).toBe(true);
+      expect(visibility.houseProperty).toBe(true);
+      expect(visibility.business).toBe(true);
+      expect(visibility.capitalGains).toBe(true);
+      expect(visibility.otherIncome).toBe(true);
+
+      // TAX-010: Most deductions hidden in new regime
+      expect(visibility.standardDeduction).toBe(true);  // Standard deduction applies to both
+      expect(visibility.section80C).toBe(false);
+      expect(visibility.section80D).toBe(false);
+      expect(visibility.hra).toBe(false);
     });
   });
 
@@ -146,16 +160,22 @@ describe('Field Applicability Rules', () => {
     it('should return all field names for FY 2024-25', () => {
       const fields = getAllFields('2024-25');
 
+      // Basic income fields
       expect(fields).toContain('salary');
       expect(fields).toContain('houseProperty');
       expect(fields).toContain('business');
       expect(fields).toContain('capitalGains');
       expect(fields).toContain('otherIncome');
+
+      // TAX-010: New fields
+      expect(fields).toContain('stcgEquity');
+      expect(fields).toContain('standardDeduction');
+      expect(fields).toContain('section80C');
     });
 
-    it('should return 5 income fields', () => {
+    it('should return 28 total fields (5 basic + 23 TAX-010)', () => {
       const fields = getAllFields('2024-25');
-      expect(fields.length).toBe(5);
+      expect(fields.length).toBe(28);
     });
 
     it('should return array for unknown financial year', () => {

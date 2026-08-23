@@ -56,13 +56,12 @@ If you're a new developer or AI session working on this project:
 2. Planner agent created implementation plan for TAX-001
 3. User approved plan, Developer agent implemented
 4. Tester agent ran 131 tests (all passing)
-5. Reviewer agent identified 4 issues (created GitHub issues #1-#4)
-6. User approved, marked TAX-001 DONE
-7. Repeated for TAX-002 with full approval cycle
-8. User requested accelerated implementation for TAX-003 through TAX-008
-9. Implemented all remaining requirements without approval gates
-10. Fixed all test failures and linting errors
-11. Committed all changes
+5. User approved, marked TAX-001 DONE
+6. Repeated for TAX-002 with full approval cycle
+7. User requested accelerated implementation for TAX-003 through TAX-008
+8. Implemented all remaining requirements without approval gates
+9. Fixed all test failures and linting errors
+10. Committed all changes
 
 **Requirements completed:**
 | ID | Name | Status | Notes |
@@ -244,7 +243,6 @@ This project uses an AI-native development approach with specialized agents:
 | Planner | Creates implementation plans | `.github/agents/planner.agent.md` |
 | Developer | Implements features | `.github/agents/developer.agent.md` |
 | Tester | Validates implementation | `.github/agents/tester.agent.md` |
-| Reviewer | Reviews code quality | `.github/agents/reviewer.agent.md` |
 | Builder | Creates production builds | `.github/agents/builder.agent.md` |
 | Deployer | Handles AWS deployment | `.github/agents/deployer.agent.md` |
 
