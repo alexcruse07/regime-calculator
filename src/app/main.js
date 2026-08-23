@@ -6,6 +6,9 @@
 import { initializeFormHandlers } from '../ui/components/form-handler.js';
 import { initializeViewListeners, resetView } from '../ui/views/appView.js';
 import { subscribeToState } from '../app/tax-orchestration/coordinator.js';
+import { initializeRegimeSelector } from '../ui/components/regime-selector.js';
+import { appState } from './state/appState.js';
+import { updateFieldVisibility } from './form-visibility/form-visibility-controller.js';
 
 /**
  * Initializes the application
@@ -27,20 +30,29 @@ function initializeApp() {
     console.log('Setting up form handlers...');
     const unsubscribeFormHandlers = initializeFormHandlers(form);
 
-    // Step 3: Initialize view listeners (state → UI updates)
+    // Step 3: Initialize regime selector (TAX-009)
+    console.log('Setting up regime selector...');
+    const unsubscribeRegimeSelector = initializeRegimeSelector(handleRegimeChange);
+
+    // Step 4: Initialize view listeners (state → UI updates)
     console.log('Setting up view listeners...');
     const unsubscribeViewListeners = initializeViewListeners(subscribeToState);
 
-    // Step 4: Reset view to initial state
+    // Step 5: Initialize field visibility based on default regime
+    const initialState = appState.getState();
+    updateFieldVisibility(initialState.selectedRegime, initialState.financialYear);
+
+    // Step 6: Reset view to initial state
     console.log('Resetting view to initial state...');
     resetView();
 
-    // Step 5: Log successful initialization
+    // Step 7: Log successful initialization
     console.log('✓ Application initialized successfully');
 
     // Return cleanup function for testing/teardown
     return () => {
       unsubscribeFormHandlers();
+      unsubscribeRegimeSelector();
       unsubscribeViewListeners();
       console.log('Application cleaned up');
     };
@@ -49,6 +61,25 @@ function initializeApp() {
     displayErrorMessage(error.message);
     throw error;
   }
+}
+
+/**
+ * Handles regime change from the regime selector
+ * Updates state and field visibility
+ * @param {string} newRegime - The newly selected regime
+ */
+function handleRegimeChange(newRegime) {
+  // Update state
+  appState.setSelectedRegime(newRegime);
+
+  // Get current financial year from state
+  const state = appState.getState();
+
+  // Update field visibility based on new regime
+  updateFieldVisibility(newRegime, state.financialYear);
+
+  // Clear any previous calculation results since regime changed
+  appState.clearCalculations();
 }
 
 /**

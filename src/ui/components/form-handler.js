@@ -8,9 +8,14 @@
  * - business: Business/professional income (TAX-006)
  * - capitalGains: Capital gains (TAX-007)
  * - otherIncome: Other income (TAX-008)
+ *
+ * Regime Selection (TAX-009):
+ * - taxRegime: 'old' | 'new' | 'compare'
  */
 
 import { orchestrateCalculation, resetCalculation } from '../../app/tax-orchestration/coordinator.js';
+import { getSelectedRegime } from './regime-selector.js';
+import { DEFAULT_REGIME } from '../../shared/constants/regimes.js';
 
 /**
  * Handles tax form submission
@@ -22,7 +27,7 @@ export async function handleFormSubmit(event) {
 
   const form = event.target;
 
-  // Collect form data including all income types (TAX-004 to TAX-008)
+  // Collect form data including all income types (TAX-004 to TAX-008) and regime (TAX-009)
   const formData = {
     salary: form.elements['salary']?.value || '',
     houseProperty: form.elements['house-property']?.value || '',
@@ -30,6 +35,7 @@ export async function handleFormSubmit(event) {
     capitalGains: form.elements['capital-gains']?.value || '',
     otherIncome: form.elements['other-income']?.value || '',
     financialYear: form.elements['financial-year']?.value || '',
+    taxRegime: getSelectedRegime() || DEFAULT_REGIME,  // TAX-009: Include regime
   };
 
   // Orchestrate calculation
@@ -83,7 +89,7 @@ export function initializeFormHandlers(form) {
 /**
  * Gets form data from form elements
  * @param {HTMLFormElement} form - The form element
- * @returns {Object} Form data object with all income types
+ * @returns {Object} Form data object with all income types and regime
  */
 export function getFormData(form) {
   if (!form) {
@@ -94,6 +100,7 @@ export function getFormData(form) {
       capitalGains: '',
       otherIncome: '',
       financialYear: '',
+      taxRegime: DEFAULT_REGIME,
     };
   }
 
@@ -104,6 +111,7 @@ export function getFormData(form) {
     capitalGains: form.elements['capital-gains']?.value || '',
     otherIncome: form.elements['other-income']?.value || '',
     financialYear: form.elements['financial-year']?.value || '',
+    taxRegime: getSelectedRegime() || DEFAULT_REGIME,  // TAX-009
   };
 }
 

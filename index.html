@@ -36,8 +36,32 @@
               </select>
             </div>
 
+            <!-- TAX-009: Regime Selection -->
+            <div class="form-group regime-selection" id="regime-selection-group">
+              <fieldset>
+                <legend>Select Tax Regime:</legend>
+                <div class="regime-options" role="radiogroup" aria-label="Tax regime selection">
+                  <label class="regime-option">
+                    <input type="radio" name="tax-regime" value="old" id="regime-old">
+                    <span class="regime-label">Old Regime</span>
+                    <span class="regime-hint">With deductions & exemptions</span>
+                  </label>
+                  <label class="regime-option">
+                    <input type="radio" name="tax-regime" value="new" id="regime-new">
+                    <span class="regime-label">New Regime</span>
+                    <span class="regime-hint">Lower rates, fewer deductions</span>
+                  </label>
+                  <label class="regime-option">
+                    <input type="radio" name="tax-regime" value="compare" id="regime-compare" checked>
+                    <span class="regime-label">Compare Both</span>
+                    <span class="regime-hint">See which is better for you</span>
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+
             <!-- TAX-004: Salary Income Input -->
-            <div class="form-group">
+            <div class="form-group" data-field="salary">
               <label for="salary">Salary Income (₹):</label>
               <input 
                 type="number" 
@@ -52,7 +76,7 @@
             </div>
 
             <!-- TAX-005: House Property Income Input -->
-            <div class="form-group">
+            <div class="form-group" data-field="houseProperty">
               <label for="house-property">House Property Income (₹):</label>
               <input 
                 type="number" 
@@ -66,7 +90,7 @@
             </div>
 
             <!-- TAX-006: Business/Professional Income Input -->
-            <div class="form-group">
+            <div class="form-group" data-field="business">
               <label for="business-income">Business/Professional Income (₹):</label>
               <input 
                 type="number" 
@@ -81,7 +105,7 @@
             </div>
 
             <!-- TAX-007: Capital Gains Input -->
-            <div class="form-group">
+            <div class="form-group" data-field="capitalGains">
               <label for="capital-gains">Capital Gains (₹):</label>
               <input 
                 type="number" 
@@ -96,7 +120,7 @@
             </div>
 
             <!-- TAX-008: Other Income Input -->
-            <div class="form-group">
+            <div class="form-group" data-field="otherIncome">
               <label for="other-income">Other Income (₹):</label>
               <input 
                 type="number" 

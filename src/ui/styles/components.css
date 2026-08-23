@@ -267,3 +267,162 @@
     font-size: 0.9rem;
   }
 }
+
+/* ==========================================================================
+   TAX-009: Regime Selection Styles
+   ========================================================================== */
+
+/* Regime Selection Group */
+.regime-selection {
+  margin: 1.5rem 0;
+}
+
+.regime-selection fieldset {
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  background-color: #f8f9fa;
+}
+
+.regime-selection legend {
+  font-weight: 600;
+  color: #333;
+  padding: 0 0.5rem;
+  font-size: 1rem;
+}
+
+/* Regime Options Container */
+.regime-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+/* Individual Regime Option */
+.regime-option {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 160px;
+  padding: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.regime-option:hover {
+  border-color: #667eea;
+  background-color: #f0f4ff;
+}
+
+.regime-option:focus-within {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* Radio Input Styling */
+.regime-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Checked State */
+.regime-option:has(input[type="radio"]:checked) {
+  border-color: #667eea;
+  background-color: #e8f0fe;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.regime-option:has(input[type="radio"]:checked) .regime-label {
+  color: #667eea;
+}
+
+/* Regime Label */
+.regime-label {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.regime-label::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.regime-option:has(input[type="radio"]:checked) .regime-label::before {
+  border-color: #667eea;
+  background-color: #667eea;
+  box-shadow: inset 0 0 0 3px white;
+}
+
+/* Regime Hint Text */
+.regime-hint {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.25rem;
+  margin-left: 26px; /* Align with label text (18px circle + 8px gap) */
+}
+
+/* Disabled State */
+.regime-option[aria-disabled="true"],
+.regime-option:has(input[type="radio"]:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.regime-option[aria-disabled="true"]:hover,
+.regime-option:has(input[type="radio"]:disabled):hover {
+  border-color: #ddd;
+  background-color: white;
+}
+
+/* Hidden Field Styles (for dynamic visibility) */
+.form-group.field-hidden {
+  display: none;
+}
+
+/* Responsive Design for Regime Selection */
+@media (max-width: 768px) {
+  .regime-options {
+    flex-direction: column;
+  }
+
+  .regime-option {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .regime-selection fieldset {
+    padding: 0.75rem 1rem;
+  }
+
+  .regime-option {
+    padding: 0.75rem;
+  }
+
+  .regime-label {
+    font-size: 0.95rem;
+  }
+
+  .regime-hint {
+    font-size: 0.8rem;
+  }
+}
+

@@ -17,6 +17,7 @@ Summarize the recommended approach at a high level, aligned with the repository 
 
 # Files To Create
 
+Create Plan files for avery task inside /plan
 List files that should be added, with a short explanation of why each file is needed.
 
 # Files To Modify

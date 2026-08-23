@@ -8,7 +8,12 @@
  * - business: Business/professional income (TAX-006)
  * - capitalGains: Capital gains (TAX-007) - kept separate for special treatment
  * - otherIncome: Other income (TAX-008)
+ *
+ * Regime Selection (TAX-009):
+ * - selectedRegime: 'old' | 'new' | 'compare'
  */
+
+import { DEFAULT_REGIME, isValidRegime } from '../../shared/constants/regimes.js';
 
 /**
  * Creates the initial application state
@@ -24,6 +29,7 @@ function createInitialState() {
       otherIncome: 0,
     },
     financialYear: '2024-25',
+    selectedRegime: DEFAULT_REGIME,  // TAX-009: 'old' | 'new' | 'compare'
     validationErrors: [],
     calculations: null,
     isCalculating: false,
@@ -107,6 +113,31 @@ export class AppState {
       financialYear: year,
     };
     this.notifyListeners();
+  }
+
+  /**
+   * Sets the selected tax regime (TAX-009)
+   * @param {string} regime - Tax regime ('old' | 'new' | 'compare')
+   */
+  setSelectedRegime(regime) {
+    if (!isValidRegime(regime)) {
+      console.warn(`Invalid regime: ${regime}`);
+      return;
+    }
+
+    this.state = {
+      ...this.state,
+      selectedRegime: regime,
+    };
+    this.notifyListeners();
+  }
+
+  /**
+   * Gets the currently selected regime (TAX-009)
+   * @returns {string} The selected regime
+   */
+  getSelectedRegime() {
+    return this.state.selectedRegime;
   }
 
   /**
