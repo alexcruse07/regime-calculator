@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Compare income tax liability between old and new Indian tax regimes">
+  <title>Indian Income Tax Calculator</title>
+  <link rel="stylesheet" href="src/ui/styles/main.css">
+</head>
+<body>
+  <div id="app" class="container">
+    <header class="header" role="banner" aria-label="Application header">
+      <div class="header__container">
+        <div class="header__content">
+          <h1 class="header__title">Indian Income Tax Calculator</h1>
+          <p class="header__description">Compare Old vs New Tax Regimes for FY 2024-25</p>
+          <p class="header__context" id="header-fy-context">
+            Financial Year: 
+            <span id="current-fy" role="status" aria-live="polite">2024-25</span>
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="input-section" id="input-section">
+        <div class="card">
+          <h2>Enter Your Details</h2>
+          
+          <form id="tax-form" class="tax-form">
+            <div class="form-group">
+              <label for="financial-year">Financial Year:</label>
+              <select id="financial-year" name="financial-year" required>
+                <option value="">Select a financial year</option>
+                <option value="2024-25">2024-25 (FY 2024-2025)</option>
+              </select>
+            </div>
+
+            <!-- TAX-004: Salary Income Input -->
+            <div class="form-group">
+              <label for="salary">Salary Income (₹):</label>
+              <input 
+                type="number" 
+                id="salary" 
+                name="salary" 
+                placeholder="0"
+                min="0"
+                step="1"
+                aria-describedby="salary-help"
+              >
+              <small id="salary-help" class="form-help">Annual salary before deductions</small>
+            </div>
+
+            <!-- TAX-005: House Property Income Input -->
+            <div class="form-group">
+              <label for="house-property">House Property Income (₹):</label>
+              <input 
+                type="number" 
+                id="house-property" 
+                name="house-property" 
+                placeholder="0"
+                step="1"
+                aria-describedby="house-property-help"
+              >
+              <small id="house-property-help" class="form-help">Net income from house property (can be negative for loss)</small>
+            </div>
+
+            <!-- TAX-006: Business/Professional Income Input -->
+            <div class="form-group">
+              <label for="business-income">Business/Professional Income (₹):</label>
+              <input 
+                type="number" 
+                id="business-income" 
+                name="business-income" 
+                placeholder="0"
+                min="0"
+                step="1"
+                aria-describedby="business-income-help"
+              >
+              <small id="business-income-help" class="form-help">Income from business or profession</small>
+            </div>
+
+            <!-- TAX-007: Capital Gains Input -->
+            <div class="form-group">
+              <label for="capital-gains">Capital Gains (₹):</label>
+              <input 
+                type="number" 
+                id="capital-gains" 
+                name="capital-gains" 
+                placeholder="0"
+                min="0"
+                step="1"
+                aria-describedby="capital-gains-help"
+              >
+              <small id="capital-gains-help" class="form-help">Total capital gains (taxed separately if applicable)</small>
+            </div>
+
+            <!-- TAX-008: Other Income Input -->
+            <div class="form-group">
+              <label for="other-income">Other Income (₹):</label>
+              <input 
+                type="number" 
+                id="other-income" 
+                name="other-income" 
+                placeholder="0"
+                min="0"
+                step="1"
+                aria-describedby="other-income-help"
+              >
+              <small id="other-income-help" class="form-help">Interest, dividends, and other taxable income</small>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Calculate Tax</button>
+              <button type="reset" class="btn btn-secondary">Clear</button>
+            </div>
+          </form>
+
+          <div id="validation-errors" class="validation-errors" style="display: none;"></div>
+        </div>
+      </section>
+
+      <section class="results-section" id="results-section" style="display: none;">
+        <div class="card">
+          <h2>Tax Calculation Results</h2>
+          
+          <div class="comparison-container">
+            <div class="regime-column">
+              <h3>Old Regime</h3>
+              <div class="result-item">
+                <span class="result-label">Gross Income:</span>
+                <span class="result-value" id="old-gross-income">₹0</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Taxable Income:</span>
+                <span class="result-value" id="old-taxable-income">₹0</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Income Tax:</span>
+                <span class="result-value" id="old-income-tax">₹0</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Surcharge:</span>
+                <span class="result-value" id="old-surcharge">₹0</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Health & Education Cess:</span>
+                <span class="result-value" id="old-cess">₹0</span>
+              </div>
+              <div class="result-item result-total">
+                <span class="result-label">Total Tax:</span>
+                <span class="result-value" id="old-total-tax">₹0</span>
+              </div>
+            </div>
+
+            <div class="regime-column">
+              <h3>New Regime</h3>
+              <div class="result-item">
+                <span class="result-label">Gross Income:</span>
+                <span class="result-value" id="new-gross-income">₹0</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Taxable Income:</span>
+                <span class="result-value" id="new-taxable-income">₹0</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Income Tax:</span>
+                <span class="result-value" id="new-income-tax">₹0</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Surcharge:</span>
+                <span class="result-value" id="new-surcharge">₹0</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Health & Education Cess:</span>
+                <span class="result-value" id="new-cess">₹0</span>
+              </div>
+              <div class="result-item result-total">
+                <span class="result-label">Total Tax:</span>
+                <span class="result-value" id="new-total-tax">₹0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="comparison-summary">
+            <h3>Comparison Summary</h3>
+            <div class="result-item result-highlight">
+              <span class="result-label">Tax Difference:</span>
+              <span class="result-value" id="tax-difference">₹0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">More Beneficial Regime:</span>
+              <span class="result-value" id="beneficial-regime">-</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; 2026 Indian Income Tax Calculator. For informational purposes only.</p>
+    </footer>
+  </div>
+
+  <script type="module" src="src/app/main.js"></script>
+</body>
+</html>
