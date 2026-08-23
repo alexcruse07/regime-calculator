@@ -1,6 +1,51 @@
 # Indian Income Tax Calculator
 
-A static web application to compare income tax liability between the old and new Indian tax regimes for a single financial year.
+A static web application to compare income tax liability between the old and new Indian tax regimes.
+
+## 🚀 Quick Start for New Developers / AI Sessions
+
+**First time working on this project?** Read these documents:
+
+1. **[docs/PROJECT_HISTORY.md](docs/PROJECT_HISTORY.md)** - Complete development history
+2. **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture
+3. **[docs/REQUIREMENTS.md](docs/REQUIREMENTS.md)** - What's built and pending
+4. **[docs/plans/](docs/plans/)** - Implementation plans for each feature
+
+### Getting Started in 60 Seconds
+
+```bash
+# Install dependencies
+npm install
+
+# Run tests (192 tests, all should pass)
+npm test
+
+# Start development server
+npm run serve
+# Open http://localhost:8080
+```
+
+---
+
+## Project Status
+
+**Version**: 0.1.0 (Foundation Complete)  
+**Last Updated**: 2026-08-23
+
+### ✅ Completed (TAX-001 to TAX-008)
+- Static website foundation with three-layer architecture
+- Application header with dynamic financial year display
+- Financial year selection (2024-25)
+- 5 income input types (salary, house property, business, capital gains, other)
+- Input validation and normalization
+- 192 passing tests
+
+### 🔲 Pending
+- Tax calculation logic (Old vs New regime)
+- Results display UI
+- AWS deployment
+
+---
 
 ## Project Type
 
@@ -13,10 +58,6 @@ Static website (no backend, no database).
 - Modern JavaScript (ES modules)
 - Vitest for testing
 - ESLint for code quality
-
-## Current Stage
-
-Phase 1 Complete - Static website foundation established with core architecture, validation, formatting, and calculation engine.
 
 ## Quick Start
 
@@ -59,16 +100,17 @@ npm run test:coverage
 
 ### Test Coverage
 
-Current coverage (80%+ target for business logic layers):
-- **Formatters**: 100% ✓
-- **Validators**: 100% ✓
-- **Normalizers**: 86.85% ✓
-- **App State**: 85.79% ✓
-- **Coordinator**: 88.03% ✓
-- **Tax Types**: 86-91% ✓
-- **Tax Rules**: 76-92% ✓
+Current test stats:
+- **Total Tests**: 192 passing ✅
+- **Test Files**: 5
+- **Coverage Target**: 80%+ for business logic
 
-**Total**: 131 tests passing, 57% overall coverage (UI layer untested in Node)
+Test breakdown:
+- Validators: 35 tests
+- Normalizers: 41 tests  
+- Formatters: 30 tests
+- Header Component: 61 tests
+- Integration: 25 tests
 
 ## Code Quality
 
@@ -92,15 +134,28 @@ Key directories:
 
 ## Features
 
-### Core Functionality (Phase 1)
-- ✓ Static website with semantic HTML
-- ✓ Responsive CSS layout
-- ✓ Input validation and normalization
-- ✓ Tax calculations for FY 2024-25
-- ✓ Old vs New regime comparison
-- ✓ Indian currency formatting
-- ✓ Immutable state management
-- ✓ Comprehensive test suite
+### Implemented (Phase 1)
+- ✅ Static website with semantic HTML
+- ✅ Responsive CSS layout
+- ✅ Application header with dynamic FY display
+- ✅ Financial year selection dropdown
+- ✅ 5 income input fields:
+  - Salary Income (non-negative)
+  - House Property Income (can be negative for loss)
+  - Business/Professional Income (non-negative)
+  - Capital Gains (non-negative, kept separate)
+  - Other Income (non-negative)
+- ✅ Input validation and normalization
+- ✅ Indian currency formatting
+- ✅ Immutable state management
+- ✅ Comprehensive test suite (192 tests)
+
+### Pending (Phase 2)
+- 🔲 Old regime tax calculation
+- 🔲 New regime tax calculation
+- 🔲 Side-by-side comparison UI
+- 🔲 Tax savings recommendations
+- 🔲 Deductions support (80C, 80D, etc.)
 
 ### Architecture Highlights
 - **Separation of Concerns**: UI, App, Domain, and Shared layers
@@ -143,8 +198,46 @@ Future years can be added by creating new rule files in `src/domain/rules/financ
 
 ## Documentation
 
-- [FOUNDATION_ARCHITECTURE.md](docs/FOUNDATION_ARCHITECTURE.md) - Detailed architecture and structure
-- [CHANGELOG.md](CHANGELOG.md) - Version history and changes
+### For New Developers / AI Sessions
+- **[PROJECT_HISTORY.md](docs/PROJECT_HISTORY.md)** - Complete development history and context
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture
+- **[REQUIREMENTS.md](docs/REQUIREMENTS.md)** - Working requirement index
+
+### Technical Documentation
+- [FOUNDATION_ARCHITECTURE.md](docs/FOUNDATION_ARCHITECTURE.md) - Detailed architecture
+- [DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md) - AI agent workflow
+- [PRD.md](docs/PRD.md) - Product requirements
+- [CHANGELOG.md](CHANGELOG.md) - Version history
+
+### Implementation Plans
+- [PLAN-TAX-001](docs/plans/PLAN-TAX-001-static-website-foundation.md) - Foundation
+- [PLAN-TAX-002](docs/plans/PLAN-TAX-002-application-header.md) - Header
+- [PLAN-TAX-003](docs/plans/PLAN-TAX-003-financial-year-selection.md) - FY Selection
+- [PLAN-TAX-004](docs/plans/PLAN-TAX-004-salary-income-input.md) - Salary Input
+- [PLAN-TAX-005](docs/plans/PLAN-TAX-005-house-property-income.md) - House Property
+- [PLAN-TAX-006](docs/plans/PLAN-TAX-006-business-income.md) - Business Income
+- [PLAN-TAX-007](docs/plans/PLAN-TAX-007-capital-gains.md) - Capital Gains
+- [PLAN-TAX-008](docs/plans/PLAN-TAX-008-other-income.md) - Other Income
+
+### Architectural Decisions
+- [ADR-001](docs/decisions/ADR-001-use-plain-javascript.md) - Use Plain JavaScript
+
+## AI Development Framework
+
+This project uses an AI-native development approach with specialized agents:
+
+| Agent | Purpose |
+|-------|---------|
+| **Orchestrator** | Coordinates overall workflow |
+| **Planner** | Creates implementation plans |
+| **Developer** | Implements features |
+| **Tester** | Validates with tests |
+| **Reviewer** | Reviews code quality |
+| **Builder** | Creates production builds |
+| **Deployer** | Handles AWS deployment |
+
+Agent definitions: `.github/agents/`  
+Skills: `.github/skills/`
 
 ## Development Notes
 
