@@ -10,25 +10,15 @@
 </head>
 <body>
   <div id="app" class="app-container">
-    <!-- Features Strip -->
-    <div class="features-strip">
-      <div class="feature-item"><span class="feature-icon">📊</span> Compare Regimes</div>
-      <div class="feature-item"><span class="feature-icon">💰</span> Accurate Calculations</div>
-      <div class="feature-item"><span class="feature-icon">🔒</span> 100% Private</div>
-      <div class="feature-item"><span class="feature-icon">📱</span> Mobile Friendly</div>
-    </div>
-
+    
     <!-- Header -->
     <header class="app-header" role="banner">
       <div class="header-brand">
         <div class="header-icon">🧮</div>
         <div class="header-text">
-          <h1>Indian Income Tax Calculator</h1>
-          <p>Compare Old vs New Tax Regimes</p>
+          <h1>Tax Calculator</h1>
+          <p>Smart tax calculation and comparison tool for Indian taxpayers</p>
         </div>
-      </div>
-      <div class="header-badge">
-        <span class="fy-badge" id="header-fy-context">FY <span id="current-fy">2025-26</span></span>
       </div>
     </header>
 
@@ -54,10 +44,6 @@
               <span>New Regime</span>
             </label>
           </div>
-        </div>
-        <div class="control-group">
-          <button type="submit" form="tax-form" class="btn btn-primary">Calculate Tax</button>
-          <button type="reset" form="tax-form" class="btn btn-secondary">Clear</button>
         </div>
       </section>
 
@@ -314,6 +300,16 @@
             </div>
           </div>
         </div>
+
+        <!-- Action Buttons at the end -->
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary btn-lg">
+            <span>🧮</span> Calculate Tax
+          </button>
+          <button type="reset" class="btn btn-secondary btn-lg">
+            <span>🔄</span> Clear All
+          </button>
+        </div>
       </form>
 
       <div id="validation-errors" class="validation-errors" style="display: none;"></div>
@@ -417,11 +413,96 @@
       </section>
     </main>
 
+    <!-- Why Use Section -->
+    <section class="why-use-section">
+      <h2>Why Use Our Tax Calculator?</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-box blue">✓</div>
+          <h3>100% Secure</h3>
+          <p>Your data stays private and is not stored anywhere</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-box yellow">⚡</div>
+          <h3>Instant Results</h3>
+          <p>Get instant tax calculation and comparison</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-box green">✓</div>
+          <h3>Accurate Calculation</h3>
+          <p>Based on latest tax slabs and rules</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-box purple">📱</div>
+          <h3>Mobile Friendly</h3>
+          <p>Works perfectly on all devices</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-box teal">✓</div>
+          <h3>Free to Use</h3>
+          <p>No hidden charges, completely free</p>
+        </div>
+      </div>
+    </section>
+
     <!-- Footer -->
     <footer class="app-footer">
-      <p>Indian Income Tax Calculator &copy; 2026 | All calculations are performed locally. | <a href="https://incometaxindia.gov.in" target="_blank" rel="noopener">Official Tax Portal</a></p>
+      <div class="footer-main">
+        <div class="footer-column footer-brand-col">
+          <div class="footer-logo">
+            <span class="footer-logo-icon">🧮</span>
+            <span class="footer-logo-text">Tax <span class="text-primary">Calculator</span></span>
+          </div>
+          <p class="footer-desc">Smart tax calculation and comparison tool for Indian taxpayers.</p>
+          <div class="social-icons">
+            <a href="#" class="social-icon" aria-label="Facebook">f</a>
+            <a href="#" class="social-icon" aria-label="Twitter">𝕏</a>
+            <a href="#" class="social-icon" aria-label="LinkedIn">in</a>
+            <a href="#" class="social-icon" aria-label="Instagram">📷</a>
+          </div>
+        </div>
+        
+        <div class="footer-column">
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#tax-form">Calculator</a></li>
+            <li><a href="#results-section">Old vs New Regime</a></li>
+            <li><a href="#">Tax Guide</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Disclaimer</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column">
+          <h4>Important Info</h4>
+          <ul class="footer-links">
+            <li><a href="https://incometaxindia.gov.in" target="_blank" rel="noopener">Income Tax Department</a></li>
+            <li><a href="https://www.incometax.gov.in/iec/foportal/" target="_blank" rel="noopener">Tax E-Filing Portal</a></li>
+            <li><a href="https://www.cbic.gov.in/" target="_blank" rel="noopener">CBDT Notifications</a></li>
+            <li><a href="#">Budget 2025-26</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column">
+          <h4>Contact Developer</h4>
+          <p class="developer-name">Rajesh Jaiswal</p>
+          <ul class="footer-links contact-links">
+            <li><span class="contact-icon">✉️</span> <a href="mailto:rajesh.jaiswal.dev@gmail.com">rajesh.jaiswal.dev@gmail.com</a></li>
+            <li><span class="contact-icon">📞</span> <a href="tel:+919876543210">+91 98765 43210</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2025 Tax Calculator. All rights reserved.</p>
+        <p class="made-with">Made with ❤️ for Indian Taxpayers</p>
+      </div>
     </footer>
   </div>
+
+  <!-- Hidden elements for JS compatibility -->
+  <span id="current-fy" style="display:none;">2025-26</span>
+  <span id="header-fy-context" style="display:none;"></span>
 
   <script type="module" src="src/app/main.js"></script>
 </body>

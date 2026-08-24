@@ -5,14 +5,20 @@
 /* CSS Variables */
 :root {
   /* Primary Colors */
-  --primary: #6366f1;
-  --primary-dark: #4f46e5;
-  --primary-light: #818cf8;
-  --primary-50: rgba(99, 102, 241, 0.1);
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
+  --primary-light: #60a5fa;
+  --primary-50: rgba(59, 130, 246, 0.1);
   
   /* Secondary Colors */
   --secondary: #10b981;
   --secondary-dark: #059669;
+  
+  /* Accent Colors */
+  --accent-yellow: #f59e0b;
+  --accent-purple: #8b5cf6;
+  --accent-teal: #14b8a6;
+  --accent-pink: #ec4899;
   
   /* Neutral Colors */
   --gray-50: #f8fafc;
@@ -35,7 +41,8 @@
   /* Surfaces */
   --surface: #ffffff;
   --surface-alt: #f8fafc;
-  --background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  --background: #f1f5f9;
+  --footer-bg: #1e293b;
   
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
@@ -48,6 +55,7 @@
   --radius-md: 10px;
   --radius-lg: 16px;
   --radius-xl: 24px;
+  --radius-full: 9999px;
   
   /* Transitions */
   --transition-fast: 0.15s ease;
@@ -95,4 +103,8 @@ a:hover {
 ::selection {
   background: var(--primary);
   color: white;
+}
+
+.text-primary {
+  color: var(--primary);
 }

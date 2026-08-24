@@ -4,9 +4,6 @@
 
 /* App Container */
 .app-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1rem;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -15,81 +12,63 @@
 /* Header */
 .app-header {
   background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem 2rem;
-  margin-bottom: 1.5rem;
-  box-shadow: var(--shadow-lg);
+  padding: 1.5rem 2rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
+  justify-content: center;
 }
 
 .header-brand {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .header-icon {
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .header-text h1 {
-  font-size: 1.375rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: white;
   margin: 0;
 }
 
 .header-text p {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--gray-400);
   margin: 0;
-}
-
-.header-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.fy-badge {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-xl);
-  font-size: 0.85rem;
-  font-weight: 600;
 }
 
 /* Main Content */
 .main-content {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  width: 100%;
 }
 
 /* Controls Section */
 .controls-section {
   background: var(--surface);
   border-radius: var(--radius-lg);
-  padding: 1.25rem;
+  padding: 1.25rem 1.5rem;
   box-shadow: var(--shadow-md);
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
   align-items: center;
-  justify-content: space-between;
+  margin-bottom: 1.5rem;
 }
 
 .control-group {
@@ -109,9 +88,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
   .dual-panel {
     grid-template-columns: 1fr;
   }
@@ -125,8 +105,6 @@
 }
 
 .panel-header {
-  background: linear-gradient(135deg, var(--gray-800) 0%, var(--gray-700) 100%);
-  color: white;
   padding: 1rem 1.25rem;
   display: flex;
   align-items: center;
@@ -135,10 +113,12 @@
 
 .panel-header.income-header {
   background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  color: white;
 }
 
 .panel-header.deductions-header {
   background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  color: white;
 }
 
 .panel-icon {
@@ -146,13 +126,25 @@
 }
 
 .panel-title {
-  font-size: 1.125rem;
+  font-size: 1.1rem;
   font-weight: 600;
   margin: 0;
+  color: white;
 }
 
 .panel-body {
   padding: 1rem;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
 /* Results Section */
@@ -161,7 +153,7 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   padding: 1.5rem;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
 
 .results-grid {
@@ -178,7 +170,7 @@
 }
 
 .result-card.old-regime {
-  border-left-color: #f59e0b;
+  border-left-color: var(--accent-yellow);
 }
 
 .result-card.new-regime {
@@ -187,7 +179,7 @@
 
 .result-card h3 {
   font-size: 1rem;
-  color: var(--gray-600);
+  color: var(--gray-700);
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
@@ -232,41 +224,238 @@
   color: var(--primary);
 }
 
-/* Footer */
-.app-footer {
-  background: var(--gray-900);
-  color: var(--gray-400);
-  border-radius: var(--radius-lg);
-  padding: 1rem 1.5rem;
-  margin-top: 1.5rem;
+/* Why Use Section */
+.why-use-section {
+  background: var(--surface);
+  padding: 3rem 2rem;
   text-align: center;
-  font-size: 0.8rem;
 }
 
-.app-footer a {
-  color: var(--primary-light);
+.why-use-section h2 {
+  font-size: 1.75rem;
+  color: var(--gray-800);
+  margin-bottom: 2rem;
 }
 
-/* Features Strip */
-.features-strip {
+.features-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  background: var(--surface);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  width: 200px;
+  text-align: center;
+  transition: all var(--transition);
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.feature-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.feature-icon-box.blue {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--primary);
+}
+
+.feature-icon-box.yellow {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--accent-yellow);
+}
+
+.feature-icon-box.green {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--secondary);
+}
+
+.feature-icon-box.purple {
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--accent-purple);
+}
+
+.feature-icon-box.teal {
+  background: rgba(20, 184, 166, 0.1);
+  color: var(--accent-teal);
+}
+
+.feature-card h3 {
+  font-size: 1rem;
+  color: var(--gray-800);
+  margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+  font-size: 0.85rem;
+  color: var(--gray-500);
+  margin: 0;
+}
+
+/* Footer */
+.app-footer {
+  background: var(--footer-bg);
+  color: var(--gray-300);
+  margin-top: auto;
+}
+
+.footer-main {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
   gap: 2rem;
-  padding: 1rem;
-  background: rgba(255,255,255,0.1);
-  border-radius: var(--radius-md);
+  padding: 3rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .footer-main {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+.footer-column h4 {
+  color: white;
+  font-size: 1rem;
   margin-bottom: 1rem;
 }
 
-.feature-item {
+.footer-logo {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: white;
-  font-size: 0.85rem;
+  margin-bottom: 1rem;
 }
 
-.feature-icon {
+.footer-logo-icon {
+  font-size: 1.5rem;
+  background: var(--primary);
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+}
+
+.footer-logo-text {
   font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+}
+
+.footer-desc {
+  font-size: 0.9rem;
+  color: var(--gray-400);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.social-icons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.social-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--gray-700);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.social-icon:hover {
+  background: var(--primary);
+  transform: translateY(-2px);
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+  color: var(--gray-400);
+  font-size: 0.9rem;
+  transition: color var(--transition-fast);
+}
+
+.footer-links a:hover {
+  color: var(--primary-light);
+}
+
+.developer-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.75rem;
+}
+
+.contact-links li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.contact-icon {
+  font-size: 0.9rem;
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--gray-700);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .footer-bottom {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+}
+
+.footer-bottom p {
+  font-size: 0.85rem;
+  color: var(--gray-500);
+  margin: 0;
+}
+
+.made-with {
+  color: var(--gray-400);
 }
