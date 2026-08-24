@@ -28,6 +28,9 @@ import { createDeductions } from '../../domain/tax/types/deductions.js';
  */
 export async function orchestrateCalculation(formInput) {
   try {
+    console.log('🔍 COORDINATOR: Step 1 - Input Received');
+    console.log('Form Input:', formInput);
+
     // Step 1: Validate input
     const validation = validateFormSubmission(formInput);
 
@@ -71,6 +74,16 @@ export async function orchestrateCalculation(formInput) {
     // Step 2: Normalize input
     const normalizedInput = cleanInputForCalculation(formInput);
 
+    console.log('🔍 COORDINATOR: Step 2 - Normalized Input');
+    console.log('STCG Equity:', normalizedInput.stcgEquity);
+    console.log('LTCG Equity:', normalizedInput.ltcgEquity);
+    console.log('LTCG Other (Real Estate):', normalizedInput.ltcgOther);
+    console.log('Speculative Gains:', normalizedInput.speculativeGains);
+    console.log('F&O Gains:', normalizedInput.fnoGains);
+    console.log('Interest Income:', normalizedInput.interestIncome);
+    console.log('Dividend Income:', normalizedInput.dividendIncome);
+    console.log('Other Taxable:', normalizedInput.otherTaxable);
+
     // Step 3: Update app state with all income values
     appState.setIncome({
       salary: normalizedInput.salary,
@@ -108,6 +121,9 @@ export async function orchestrateCalculation(formInput) {
       otherTaxable: normalizedInput.otherTaxable,
     });
 
+    console.log('🔍 COORDINATOR: Step 4 - Income Object Created');
+    console.log('Income Object:', income);
+
     // Step 5: Create deductions object (extract from form input)
     const deductions = createDeductions({
       standardDeduction: normalizedInput.deductions?.standardDeduction || 0,
@@ -134,6 +150,17 @@ export async function orchestrateCalculation(formInput) {
       rules.oldRegime,
       rules.newRegime,
     );
+
+    console.log('🔍 COORDINATOR: Step 7 - Calculation Complete');
+    console.log('Old Regime Gross Income:', calculationResult.oldRegime?.grossIncome);
+    console.log('Old Regime Total Tax:', calculationResult.oldRegime?.totalTax);
+    console.log('Special Income Taxes (Old):', {
+      ordinaryIncomeTax: calculationResult.oldRegime?.ordinaryIncomeTax,
+      stcgTax: calculationResult.oldRegime?.stcgTax,
+      ltcgEquityTax: calculationResult.oldRegime?.ltcgEquityTax,
+      speculativeTax: calculationResult.oldRegime?.speculativeTax,
+      fnoTax: calculationResult.oldRegime?.fnoTax,
+    });
 
     // Step 8: Update app state with results
     appState.setCalculations(calculationResult);

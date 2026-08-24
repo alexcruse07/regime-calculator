@@ -9,6 +9,7 @@ import { subscribeToState } from '../app/tax-orchestration/coordinator.js';
 import { initializeRegimeSelector } from '../ui/components/regime-selector.js';
 import { appState } from './state/appState.js';
 import { updateFieldVisibility } from './form-visibility/form-visibility-controller.js';
+import { handleExport } from '../ui/components/export-handler.js'; // TAX-022
 
 /**
  * Initializes the application
@@ -38,6 +39,10 @@ function initializeApp() {
     console.log('Setting up FY listener...');
     initializeFYListener();
     initializeNewRegimeNotice();
+
+    // Step 4.5: Initialize export button (TAX-022)
+    console.log('Setting up export button...');
+    initializeExportButton();
 
     // Step 5: Initialize view listeners (state → UI updates)
     console.log('Setting up view listeners...');
@@ -129,6 +134,26 @@ function updateNewRegimeNotice(regime) {
   const notice = document.getElementById('new-regime-notice');
   if (notice) {
     notice.style.display = regime === 'new' ? 'block' : 'none';
+  }
+}
+
+/**
+ * Initialize export button (TAX-022)
+ * Sets up event listener for export functionality
+ */
+function initializeExportButton() {
+  const exportButton = document.getElementById('export-button');
+  if (exportButton) {
+    // Button starts disabled
+    exportButton.disabled = true;
+    
+    // Add click event listener
+    exportButton.addEventListener('click', async (e) => {
+      e.preventDefault();
+      await handleExport('text'); // Export as text by default
+    });
+    
+    console.log('✓ Export button initialized');
   }
 }
 

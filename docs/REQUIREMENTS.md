@@ -1006,3 +1006,166 @@ Contains all deduction inputs (only enabled when Old Regime is selected):
 | TAX-019 | Enhanced UI Design with Footer | P1 | TODO | TAX-018 |
 | TAX-020 | Financial Year Update (2025-26 & 2026-27) | P0 | TODO | TAX-017 |
 | TAX-021 | Separate Deductions Tab | P1 | TODO | TAX-018 |
+| TAX-022 | User Information & Export Results | P1 | IN PROGRESS | TAX-021 |
+
+---
+
+## TAX-022 — User Information & Export Results
+
+### Overview
+
+Add user identification fields (Name and PAN) to the tax calculator and implement export functionality to allow users to save their inputs and calculated results in PDF or text format.
+
+### Requirements
+
+#### 1. User Information Section
+
+**Location:** At the top of the form, before income input sections.
+
+**Fields:**
+1. **Full Name** (Mandatory)
+   - Text input field
+   - Label: "Full Name *"
+   - Placeholder: "Enter your full name"
+   - Validation: Non-empty, maximum 100 characters
+   - Error message if empty: "Full Name is required"
+   - Store in form state for export
+
+2. **PAN (Permanent Account Number)** (Optional)
+   - Text input field
+   - Label: "PAN (Optional)"
+   - Placeholder: "AAAAA1234B"
+   - Validation: If provided, must match PAN format (AAAAA1234A format) or show warning
+   - Optional field - should not block form submission
+   - Store in form state for export
+
+#### 2. Export Button & Functionality
+
+**Location:** Below the results section (after tax comparison results are displayed).
+
+**Button Properties:**
+- Label: "Export Results"
+- Button should be disabled until form is submitted and results are calculated
+- On click: Trigger export functionality
+
+**Export Functionality (TAX-022.1):**
+
+When Export button is clicked:
+
+1. **Data to Export:**
+   - User Information:
+     - Full Name
+     - PAN (if provided, else "Not provided")
+   - Financial Year selected
+   - Tax Regime selected (Old/New)
+   - All Income Inputs:
+     - Salary
+     - House Property Income
+     - Business/Professional Income
+     - Short-term Capital Gains (Equity, Other)
+     - Long-term Capital Gains (Equity, Real Estate, Other)
+     - Speculative Income
+     - F&O Income
+     - Interest Income
+     - Dividend Income
+     - Other Income
+   - All Deductions (if applicable):
+     - Section-wise deduction details
+   - Calculated Results:
+     - Gross Income
+     - Total Deductions
+     - Taxable Income
+     - Income Tax (with breakdown by income type if available)
+     - Rebate (if applicable)
+     - Surcharge (if applicable)
+     - Cess
+     - Total Tax Payable
+
+2. **Export Format: PDF** (Primary)
+   - Use jsPDF library if available, or similar
+   - Generate a professional-looking PDF with:
+     - Header with calculator name and date/time
+     - User information section
+     - Input summary section (organized by income type)
+     - Deductions summary (if applicable)
+     - Results section with tax breakdown
+     - Footer with financial year and regime used
+   - Filename format: `Tax_Report_[Name]_[FY].pdf`
+   - Example: `Tax_Report_John_Doe_FY2025-26.pdf`
+
+3. **Export Format: Fallback (Text/CSV)**
+   - If PDF library cannot be used:
+     - Generate a formatted text file with clear sections
+     - Use ASCII borders and proper spacing
+     - Filename: `Tax_Report_[Name]_[FY].txt`
+   - OR generate CSV format for import to spreadsheet:
+     - Filename: `Tax_Report_[Name]_[FY].csv`
+
+4. **Export Trigger:**
+   - User clicks Export button
+   - File automatically downloads to user's default Downloads folder
+   - Show success message: "Report exported successfully"
+   - Browser's native file download mechanism should be used
+
+#### 3. Form Behavior Updates
+
+**Form Submission:**
+- Name field is mandatory - form cannot be submitted without it
+- PAN field is optional - form can be submitted without it
+- Results section should display the entered Name in the report/results (optional: "Calculated for: [Name]")
+- Export button appears only after successful form submission
+
+**Form Reset (Clear Button):**
+- Clear button should also reset Name and PAN fields
+- Clear functionality remains unchanged otherwise
+
+### Acceptance Criteria
+
+1. ✅ Name field appears at top of form with mandatory indicator (*)
+2. ✅ PAN field appears below Name field, marked as optional
+3. ✅ Form submission is blocked if Name is empty
+4. ✅ Form submission succeeds if Name is filled, regardless of PAN
+5. ✅ Export button appears below results section
+6. ✅ Export button is disabled before form submission
+7. ✅ Export button is enabled after results are calculated
+8. ✅ Clicking Export generates a file (PDF or text format)
+9. ✅ File contains all required data (user info, inputs, results)
+10. ✅ File is named correctly with user name and FY
+11. ✅ File downloads automatically to user's device
+12. ✅ PAN format validation shows warning but doesn't block submission
+13. ✅ Clear button resets Name and PAN fields
+14. ✅ Export works in both Old and New regimes
+
+### Dependencies
+- TAX-021 (Deductions Tab must be complete)
+- jsPDF library or similar (for PDF export)
+
+### Testing Scenarios
+
+1. Submit form without Name → Error message shown, form not submitted
+2. Submit form with Name only → Success, results shown, export enabled
+3. Submit form with Name and valid PAN → Success, PAN displayed in export
+4. Submit form with Name and invalid PAN → Warning shown but submission succeeds
+5. Click Export → PDF file downloads with user's name in filename
+6. Export data includes all entered values
+7. Export data includes all calculated tax results
+8. Clear button resets Name, PAN, and all inputs
+9. After Clear, Export button is disabled again
+10. Export works correctly in both regime comparisons
+
+### Files to Modify
+- `index.html` - Add Name and PAN input fields
+- `src/ui/components/form-handler.js` - Handle Name/PAN inputs and validation
+- `src/ui/components/results-display.js` - Add Export button and handler
+- Create `src/ui/components/export-handler.js` - Export functionality (PDF/Text)
+- `src/app/input-normalization/normalizers.js` - Include Name and PAN in normalized data
+- `src/app/tax-orchestration/coordinator.js` - Pass Name and PAN to calculation
+- `package.json` - Add jsPDF library if using PDF export
+
+### Implementation Notes
+
+1. **PDF Library:** Recommend jsPDF for PDF generation (lightweight, no backend needed)
+2. **File Naming:** Use sanitized user name (remove special characters) in filename
+3. **Export Data Structure:** Create a separate export module to format data for both PDF and text
+4. **Accessibility:** Ensure export button has proper ARIA labels and keyboard support
+5. **User Experience:** Show loading indicator during PDF generation if needed

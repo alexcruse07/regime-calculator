@@ -262,3 +262,105 @@ details[open] summary::before {
   opacity: 0.6;
   pointer-events: none;
 }
+
+/* User Information Section */
+.user-info-section {
+  background: linear-gradient(135deg, var(--primary-50) 0%, var(--blue-50) 100%);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--primary-100);
+}
+
+.user-info-section .form-group {
+  display: inline-block;
+  width: calc(50% - 0.5rem);
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+}
+
+.user-info-section .form-group:nth-child(even) {
+  margin-right: 0;
+}
+
+@media (max-width: 768px) {
+  .user-info-section .form-group {
+    display: block;
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Required and Optional Indicators */
+.required-indicator {
+  color: var(--error);
+  font-weight: 600;
+}
+
+.optional-indicator {
+  color: var(--gray-500);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+/* Error Messages */
+.error-message {
+  display: block;
+  color: var(--error);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  min-height: 1.2rem;
+}
+
+/* Action Buttons Section */
+.action-buttons-section {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  border-top: 1px solid var(--gray-200);
+}
+
+.action-buttons-section .btn {
+  min-width: 150px;
+}
+
+@media (max-width: 768px) {
+  .action-buttons-section {
+    flex-direction: column;
+  }
+
+  .action-buttons-section .btn {
+    width: 100%;
+  }
+}
+
+/* Button States */
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-primary:disabled {
+  background: var(--gray-300);
+  box-shadow: none;
+  transform: none;
+}
+
+/* Button Icons and Text */
+.btn-icon {
+  display: inline-block;
+  font-size: 1.1rem;
+}
+
+.btn-text {
+  display: inline-block;
+}
+
+/* Form Input without prefix */
+.form-input:not([style*="padding-left"]) {
+  padding-left: 0.75rem;
+}

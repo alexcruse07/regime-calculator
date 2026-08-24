@@ -11,6 +11,10 @@
  * - tradingIncome: Speculative and F&O (TAX-010)
  * - deductions: All Chapter VI-A deductions (TAX-010)
  *
+ * User Information (TAX-022):
+ * - fullName: User's full name (mandatory)
+ * - pan: Permanent Account Number (optional)
+ *
  * Regime Selection (TAX-009):
  * - taxRegime: 'old' | 'new' | 'compare'
  */
@@ -20,7 +24,76 @@ import { getSelectedRegime } from './regime-selector.js';
 import { DEFAULT_REGIME } from '../../shared/constants/regimes.js';
 
 /**
- * Handles tax form submission (TAX-010 extended)
+ * Validates Full Name (TAX-022.1)
+ * @param {string} name - Full name to validate
+ * @returns {Object} { isValid: boolean, error: string }
+ */
+function validateFullName(name) {
+  if (!name || name.trim() === '') {
+    return {
+      isValid: false,
+      error: 'Full Name is required',
+    };
+  }
+  if (name.trim().length > 100) {
+    return {
+      isValid: false,
+      error: 'Full Name must be 100 characters or less',
+    };
+  }
+  return { isValid: true, error: '' };
+}
+
+/**
+ * Validates PAN format (TAX-022.1)
+ * PAN format: AAAAA1234A (5 letters, 4 digits, 1 letter)
+ * @param {string} pan - PAN to validate
+ * @returns {Object} { isValid: boolean, error: string }
+ */
+function validatePAN(pan) {
+  if (!pan || pan.trim() === '') {
+    // PAN is optional
+    return { isValid: true, error: '' };
+  }
+
+  const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+  if (!panRegex.test(pan.toUpperCase())) {
+    return {
+      isValid: false,
+      error: 'PAN format should be AAAAA1234A (5 letters, 4 digits, 1 letter)',
+    };
+  }
+  return { isValid: true, error: '' };
+}
+
+/**
+ * Clears validation error messages from form
+ * @param {HTMLElement} errorContainer - The container to clear errors from
+ * @returns {void}
+ */
+function clearFieldErrors() {
+  // Clear individual field errors
+  const errorMessages = document.querySelectorAll('.error-message');
+  errorMessages.forEach((msg) => {
+    msg.textContent = '';
+  });
+}
+
+/**
+ * Displays validation error for a field
+ * @param {string} fieldId - ID of the field with error
+ * @param {string} errorMessage - Error message to display
+ * @returns {void}
+ */
+function showFieldError(fieldId, errorMessage) {
+  const errorElement = document.getElementById(`${fieldId}-error`);
+  if (errorElement) {
+    errorElement.textContent = errorMessage;
+  }
+}
+
+/**
+ * Handles tax form submission (TAX-010 extended, TAX-022)
  * @param {Event} event - Form submit event
  * @returns {Promise<void>}
  */
@@ -28,6 +101,28 @@ export async function handleFormSubmit(event) {
   event.preventDefault();
 
   const form = event.target;
+
+  // Clear previous errors
+  clearFormErrors(document.getElementById('validation-errors'));
+  clearFieldErrors();
+
+  // TAX-022: Get and validate user information
+  const fullName = form.elements['full-name']?.value || '';
+  const pan = form.elements['pan']?.value || '';
+
+  const nameValidation = validateFullName(fullName);
+  const panValidation = validatePAN(pan);
+
+  if (!nameValidation.isValid) {
+    showFieldError('full-name', nameValidation.error);
+    return;
+  }
+
+  if (!panValidation.isValid) {
+    showFieldError('pan', panValidation.error);
+    // Don't return here - PAN validation is a warning, not blocking
+    // But we could show a warning instead of blocking
+  }
 
   // Debug: Log form and financial year field
   console.log('📋 Form submit triggered');
@@ -37,8 +132,12 @@ export async function handleFormSubmit(event) {
   console.log('Financial Year field:', fyField);
   console.log('Financial Year value:', fyField?.value);
 
-  // Collect form data including all income types, deductions, and regime
+  // Collect form data including all income types, deductions, regime, and user info
   const formData = {
+    // TAX-022: User Information
+    fullName: fullName.trim(),
+    pan: pan.toUpperCase().trim(),
+
     // Basic income (TAX-004 to TAX-008)
     salary: form.elements['salary']?.value || '',
     houseProperty: form.elements['house-property']?.value || '',
@@ -89,6 +188,12 @@ export async function handleFormSubmit(event) {
   if (!result.success) {
     // Errors are handled by coordinator and state is updated
     // UI layer will read from state and update display
+  } else {
+    // Enable export button after successful calculation (TAX-022)
+    const exportButton = document.getElementById('export-button');
+    if (exportButton) {
+      exportButton.disabled = false;
+    }
   }
 }
 
@@ -129,11 +234,15 @@ export function handleFormReset(event) {
     resultsSection.style.display = 'none';
   }
 
+  // Disable export button (TAX-022)
+  const exportButton = document.getElementById('export-button');
+  if (exportButton) {
+    exportButton.disabled = true;
+  }
+
   // Clear validation errors
   const errorContainer = document.getElementById('validation-errors');
-  if (errorContainer) {
-    clearFormErrors(errorContainer);
-  }
+  clearFormErrors(errorContainer);
 }
 
 /**

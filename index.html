@@ -24,6 +24,20 @@
 
     <main class="main-content">
       <form id="tax-form" class="tax-form">
+        <!-- User Information Section -->
+        <section class="user-info-section">
+          <div class="form-group" data-field="fullName">
+            <label class="form-label" for="full-name">Full Name <span class="required-indicator">*</span></label>
+            <input type="text" id="full-name" name="full-name" class="form-input" placeholder="Enter your full name" maxlength="100" required>
+            <span class="error-message" id="full-name-error"></span>
+          </div>
+          <div class="form-group" data-field="pan">
+            <label class="form-label" for="pan">PAN <span class="optional-indicator">(Optional)</span></label>
+            <input type="text" id="pan" name="pan" class="form-input" placeholder="AAAAA1234A" maxlength="10">
+            <span class="error-message" id="pan-error"></span>
+          </div>
+        </section>
+
         <!-- Controls Section -->
         <section class="controls-section">
           <div class="control-group">
@@ -408,6 +422,18 @@
               <span class="result-value" id="beneficial-regime">-</span>
             </div>
           </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons-section">
+          <button type="button" id="export-button" class="btn btn-primary" disabled>
+            <span class="btn-icon">📥</span>
+            <span class="btn-text">Export Results</span>
+          </button>
+          <button type="reset" class="btn btn-secondary">
+            <span class="btn-icon">🔄</span>
+            <span class="btn-text">Clear</span>
+          </button>
         </div>
       </section>
     </main>
