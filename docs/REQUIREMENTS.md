@@ -654,3 +654,355 @@ Production Website
 The primary goal is:
 
 **Make Indian tax comparison simple, understandable, visually attractive and maintainable while keeping tax calculation rules accurate and financial-year-specific.**
+
+---
+
+# 14. New Requirements (Added 2026-08-24)
+
+The following requirements are to be implemented after the current tasks are complete.
+
+---
+
+# TAX-017 — Remove Compare Both Option
+
+**Priority:** P1  
+**Status:** TODO  
+**Dependencies:** TAX-013
+
+## Objective
+
+Remove the "Compare Both" regime selection option. Users must explicitly choose either Old Regime or New Regime.
+
+## Requirements
+
+1. Remove the "Compare Both" radio button option from the regime selection.
+2. Update the regime selection to have only two options:
+   - Old Regime
+   - New Regime
+3. Default selection should be "New Regime" (as it's the default regime from FY 2023-24).
+4. Update all related calculation logic to work with single regime selection.
+5. Results display should show calculation for the selected regime only.
+6. Optionally show a comparison note suggesting the user can switch regimes to compare.
+
+## Acceptance Criteria
+
+- Only "Old Regime" and "New Regime" options are visible.
+- "Compare Both" option is removed.
+- Default selection is "New Regime".
+- Calculation works correctly for single regime.
+- No references to "compare" mode in UI or logic.
+
+---
+
+# TAX-018 — Collapsible Input Sections
+
+**Priority:** P1  
+**Status:** TODO  
+**Dependencies:** TAX-017
+
+## Objective
+
+Implement collapsible/accordion-style input sections for better organization and reduced visual clutter.
+
+## Requirements
+
+1. Create collapsible sections for income input groups:
+   - **Income Sources** (collapsed by default, expand on click)
+     - Salary Income
+     - House Property Income
+     - Business/Professional Income
+   - **Capital Gains** (collapsed by default)
+     - STCG (Equity)
+     - STCG (Other)
+     - LTCG (Equity)
+     - LTCG (Other)
+   - **Speculative & F&O** (collapsed by default)
+     - Speculative Gains/Losses
+     - F&O Gains/Losses
+   - **Other Income** (collapsed by default)
+     - Interest Income
+     - Dividend Income
+     - Other Taxable Income
+
+2. Each section should have:
+   - Section header with title
+   - Expand/collapse indicator (chevron icon)
+   - Smooth animation on expand/collapse
+   - Click anywhere on header to toggle
+
+3. Accessibility requirements:
+   - Use proper ARIA attributes (`aria-expanded`, `aria-controls`)
+   - Keyboard accessible (Enter/Space to toggle)
+   - Screen reader announcements for state changes
+
+## Acceptance Criteria
+
+- All input sections are collapsible.
+- Sections are collapsed by default.
+- Expand/collapse animations are smooth.
+- Keyboard navigation works.
+- Screen readers announce state changes.
+
+---
+
+# TAX-019 — Enhanced UI Design with Footer
+
+**Priority:** P1  
+**Status:** TODO  
+**Dependencies:** TAX-018
+
+## Objective
+
+Enhance the overall UI with improved colors, visual hierarchy, and add a professional footer section.
+
+## UI Reference
+
+Use `docs/design/footer-reference.png` as the visual specification for the footer and feature section.
+
+## Requirements
+
+### 1. Color Scheme Enhancement
+
+Apply a professional, cohesive color scheme:
+- Primary: Deep blue (#1a365d or similar)
+- Secondary: Vibrant blue (#667eea)
+- Accent: Orange/Yellow for highlights
+- Background: Light gray/white gradients
+- Text: Dark gray for readability
+
+### 2. Feature Section ("Why Use Our Tax Calculator?")
+
+Add a feature highlight section above the footer with cards:
+
+| Feature | Icon | Description |
+|---------|------|-------------|
+| 100% Secure | Shield/Check | Your data stays private and is not stored anywhere |
+| Instant Results | Lightning | Get instant tax calculation and comparison |
+| Accurate Calculation | Target/Check | Based on latest tax slabs and rules |
+| Mobile Friendly | Device | Works perfectly on all devices |
+| Free to Use | Checkmark | No hidden charges, completely free |
+
+### 3. Footer Section
+
+Implement a dark-themed footer with:
+
+**Column 1 - Branding:**
+- Tax Calculator logo
+- Description: "Smart tax calculation and comparison tool for Indian taxpayers."
+- Social media icons (Facebook, Twitter, LinkedIn, Instagram)
+
+**Column 2 - Quick Links:**
+- Calculator
+- Old vs New Regime
+- Tax Guide
+- About Us
+- Disclaimer
+
+**Column 3 - Important Info:**
+- Income Tax Department (link)
+- Tax E-Filing Portal (link)
+- CBDT Notifications (link)
+- Budget 2024-25 (link)
+
+**Column 4 - Contact Developer:**
+- Developer: Rajesh Jaiswal
+- Email: rajesh.jaiswal.dev@gmail.com
+- Phone: +91 98765 43210
+
+**Footer Bottom:**
+- Copyright: "© 2025 Tax Calculator. All rights reserved."
+- Tagline: "Made with ❤️ for Indian Taxpayers"
+
+### 4. Visual Improvements
+
+- Add subtle gradients and shadows to cards
+- Improve button styling with hover states
+- Add visual separation between sections
+- Ensure consistent spacing and alignment
+- Add loading states with animations
+
+## Acceptance Criteria
+
+- Color scheme is cohesive and professional.
+- Feature section displays correctly.
+- Footer contains all required sections.
+- Footer links are functional (external links open in new tab).
+- Social media icons are present.
+- Footer is responsive on all devices.
+- Visual appearance matches the reference image.
+
+---
+
+# TAX-020 — Financial Year Update (2025-26 and 2026-27)
+
+**Priority:** P0  
+**Status:** TODO  
+**Dependencies:** TAX-017
+
+## Objective
+
+Replace FY 2024-25 with FY 2025-26 as the default year, and add FY 2026-27 with updated tax rules.
+
+## Requirements
+
+### 1. Remove FY 2024-25
+
+- Remove 2024-25 from the financial year dropdown.
+- Remove or archive the FY 2024-25 rules file.
+
+### 2. Add FY 2025-26 (Default)
+
+Create `src/domain/rules/financial-years/fy-2025-26.js` with:
+
+**New Regime Tax Slabs (FY 2025-26 Budget Updates):**
+| Income Range | Rate |
+|--------------|------|
+| Up to ₹4,00,000 | 0% |
+| ₹4,00,001 - ₹8,00,000 | 5% |
+| ₹8,00,001 - ₹12,00,000 | 10% |
+| ₹12,00,001 - ₹16,00,000 | 15% |
+| ₹16,00,001 - ₹20,00,000 | 20% |
+| ₹20,00,001 - ₹24,00,000 | 25% |
+| Above ₹24,00,000 | 30% |
+
+**Old Regime Tax Slabs:** (unchanged from 2024-25)
+| Income Range | Rate |
+|--------------|------|
+| Up to ₹2,50,000 | 0% |
+| ₹2,50,001 - ₹5,00,000 | 5% |
+| ₹5,00,001 - ₹10,00,000 | 20% |
+| Above ₹10,00,000 | 30% |
+
+**Standard Deduction:**
+- New Regime: ₹75,000
+- Old Regime: ₹50,000
+
+**Section 87A Rebate:**
+- New Regime: Full rebate for taxable income ≤ ₹12,00,000
+- Old Regime: Full rebate for taxable income ≤ ₹5,00,000
+
+**Surcharge:** (unchanged)
+**Cess:** 4% (unchanged)
+
+### 3. Add FY 2026-27
+
+Create `src/domain/rules/financial-years/fy-2026-27.js`:
+
+**Note:** Use FY 2025-26 rules as a baseline. Update slabs if new budget announcements are available, otherwise use same as 2025-26.
+
+### 4. Update Default Selection
+
+- Default financial year should be 2025-26.
+- Dropdown should show: 2025-26, 2026-27.
+- Update header to show current selection.
+
+### 5. Update Tests
+
+- Update all existing tests to use FY 2025-26 rules.
+- Add new tests for FY 2026-27.
+- Update boundary tests for new slab limits.
+- Update rebate tests for ₹12L threshold.
+
+## Acceptance Criteria
+
+- FY 2024-25 is removed from dropdown.
+- FY 2025-26 is the default selection.
+- FY 2026-27 is available.
+- New regime slabs are correct per 2025 budget.
+- Rebate threshold is ₹12L for new regime.
+- All tests pass with updated rules.
+
+---
+
+# TAX-021 — Separate Deductions Tab
+
+**Priority:** P1  
+**Status:** TODO  
+**Dependencies:** TAX-018
+
+## Objective
+
+Create a separate tab/section for deductions input, separate from income inputs.
+
+## Requirements
+
+### 1. Tab Structure
+
+Implement a tabbed interface with two main tabs:
+- **Income** (default active tab)
+- **Deductions**
+
+### 2. Income Tab
+
+Contains all income input sections:
+- Income Sources
+- Capital Gains
+- Speculative & F&O
+- Other Income
+
+### 3. Deductions Tab
+
+Contains all deduction inputs (only enabled when Old Regime is selected):
+
+**Section 80C (Max ₹1,50,000):**
+- PPF/EPF/VPF
+- Life Insurance Premium
+- ELSS Mutual Funds
+- NSC/Tax Saver FD
+- Tuition Fees
+- Home Loan Principal
+
+**Section 80CCD(1B) (Additional ₹50,000):**
+- NPS Contribution
+
+**Section 80D (Health Insurance):**
+- Self & Family Premium
+- Parents Premium
+- Preventive Health Checkup
+
+**Section 80E:**
+- Education Loan Interest
+
+**Section 80G:**
+- Donations
+
+**Other Deductions:**
+- HRA Exemption
+- LTA Exemption
+- Home Loan Interest (Section 24)
+- Other Deductions
+
+### 4. Regime-based Visibility
+
+- **New Regime:** Deductions tab shows a message: "Deductions not applicable under New Regime. Only Standard Deduction of ₹75,000 is automatically applied."
+- **Old Regime:** All deduction fields are enabled and editable.
+
+### 5. Tab Styling
+
+- Active tab should be visually distinct.
+- Smooth transition between tabs.
+- Tab indicator animation.
+- Keyboard accessible (arrow keys to switch tabs).
+
+## Acceptance Criteria
+
+- Two tabs are visible: Income and Deductions.
+- Income tab is active by default.
+- Deductions tab shows fields only for Old Regime.
+- Deductions tab shows message for New Regime.
+- Tab switching is smooth.
+- Keyboard navigation works.
+- All deduction fields are properly grouped.
+- Deduction limits are enforced.
+
+---
+
+## Updated Requirements Summary Table
+
+| ID | Title | Priority | Status | Dependencies |
+|---|---|---|---|---|
+| TAX-017 | Remove Compare Both Option | P1 | TODO | TAX-013 |
+| TAX-018 | Collapsible Input Sections | P1 | TODO | TAX-017 |
+| TAX-019 | Enhanced UI Design with Footer | P1 | TODO | TAX-018 |
+| TAX-020 | Financial Year Update (2025-26 & 2026-27) | P0 | TODO | TAX-017 |
+| TAX-021 | Separate Deductions Tab | P1 | TODO | TAX-018 |
