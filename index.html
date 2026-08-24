@@ -5,621 +5,411 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Compare income tax liability between old and new Indian tax regimes">
   <title>Indian Income Tax Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="src/ui/styles/main.css">
 </head>
 <body>
-  <div id="app" class="container">
-    <header class="header" role="banner" aria-label="Application header">
-      <div class="header__container">
-        <div class="header__content">
-          <h1 class="header__title">Indian Income Tax Calculator</h1>
-          <p class="header__description">Compare Old vs New Tax Regimes for FY 2024-25</p>
-          <p class="header__context" id="header-fy-context">
-            Financial Year: 
-            <span id="current-fy" role="status" aria-live="polite">2024-25</span>
-          </p>
+  <div id="app" class="app-container">
+    <!-- Features Strip -->
+    <div class="features-strip">
+      <div class="feature-item"><span class="feature-icon">📊</span> Compare Regimes</div>
+      <div class="feature-item"><span class="feature-icon">💰</span> Accurate Calculations</div>
+      <div class="feature-item"><span class="feature-icon">🔒</span> 100% Private</div>
+      <div class="feature-item"><span class="feature-icon">📱</span> Mobile Friendly</div>
+    </div>
+
+    <!-- Header -->
+    <header class="app-header" role="banner">
+      <div class="header-brand">
+        <div class="header-icon">🧮</div>
+        <div class="header-text">
+          <h1>Indian Income Tax Calculator</h1>
+          <p>Compare Old vs New Tax Regimes</p>
         </div>
+      </div>
+      <div class="header-badge">
+        <span class="fy-badge" id="header-fy-context">FY <span id="current-fy">2025-26</span></span>
       </div>
     </header>
 
     <main class="main-content">
-      <section class="input-section" id="input-section">
-        <div class="card">
-          <h2>Enter Your Details</h2>
-          
-          <form id="tax-form" class="tax-form">
-            <!-- TAX-021: Tab Navigation -->
-            <div class="tabs-container" role="tablist" aria-label="Input sections">
-              <button type="button" class="tab-button active" role="tab" aria-selected="true" aria-controls="income-panel" id="income-tab" data-tab="income">
-                💰 Income
-              </button>
-              <button type="button" class="tab-button" role="tab" aria-selected="false" aria-controls="deductions-panel" id="deductions-tab" data-tab="deductions">
-                📋 Deductions
-              </button>
-            </div>
-            <div class="form-group">
-              <label for="financial-year">Financial Year:</label>
-              <select id="financial-year" name="financial-year" required>
-                <option value="">Select a financial year</option>
-                <option value="2025-26" selected>2025-26 (FY 2025-2026)</option>
-                <option value="2026-27">2026-27 (FY 2026-2027)</option>
-              </select>
-            </div>
-
-            <!-- TAX-009/TAX-017: Regime Selection (Compare Both removed) -->
-            <div class="form-group regime-selection" id="regime-selection-group">
-              <fieldset>
-                <legend>Select Tax Regime:</legend>
-                <div class="regime-options" role="radiogroup" aria-label="Tax regime selection">
-                  <label class="regime-option">
-                    <input type="radio" name="tax-regime" value="old" id="regime-old">
-                    <span class="regime-label">Old Regime</span>
-                    <span class="regime-hint">With deductions & exemptions</span>
-                  </label>
-                  <label class="regime-option">
-                    <input type="radio" name="tax-regime" value="new" id="regime-new" checked>
-                    <span class="regime-label">New Regime</span>
-                    <span class="regime-hint">Lower rates, standard deduction only</span>
-                  </label>
-                </div>
-                <p class="regime-note">💡 Switch between regimes to compare tax liability</p>
-              </fieldset>
-            </div>
-
-            <!-- TAX-021: Income Tab Panel -->
-            <div class="tab-panel active" id="income-panel" role="tabpanel" aria-labelledby="income-tab">
-              
-              <!-- TAX-018: Primary Income Section (Collapsible) -->
-              <fieldset class="collapsible-section" id="primary-income-section">
-                <legend class="section-toggle" aria-expanded="true" aria-controls="primary-income-content">
-                  <span class="toggle-icon">▼</span> Primary Income
-                </legend>
-                <div class="section-content" id="primary-income-content">
-
-                  <!-- TAX-004: Salary Income Input -->
-                  <div class="form-group" data-field="salary">
-                    <label for="salary">Salary Income (₹):</label>
-                    <input 
-                      type="number" 
-                      id="salary" 
-                      name="salary" 
-                      placeholder="0"
-                      min="0"
-                      step="1"
-                      aria-describedby="salary-help"
-                    >
-                    <small id="salary-help" class="form-help">Annual salary before deductions</small>
-                  </div>
-
-                  <!-- TAX-005: House Property Income Input -->
-                  <div class="form-group" data-field="houseProperty">
-                    <label for="house-property">House Property Income (₹):</label>
-                    <input 
-                      type="number" 
-                      id="house-property" 
-                      name="house-property" 
-                      placeholder="0"
-                      step="1"
-                      aria-describedby="house-property-help"
-                    >
-                    <small id="house-property-help" class="form-help">Net income from house property (can be negative for loss)</small>
-                  </div>
-
-                  <!-- TAX-006: Business/Professional Income Input -->
-                  <div class="form-group" data-field="business">
-                    <label for="business-income">Business/Professional Income (₹):</label>
-                    <input 
-                      type="number" 
-                      id="business-income" 
-                      name="business-income" 
-                      placeholder="0"
-                      min="0"
-                      step="1"
-                      aria-describedby="business-income-help"
-                    >
-                    <small id="business-income-help" class="form-help">Income from business or profession</small>
-                  </div>
-                </div>
-              </fieldset>
-
-              <!-- TAX-007: Capital Gains Input (Legacy - hidden, used for backward compatibility) -->
-              <div class="form-group" data-field="capitalGains" style="display: none;">
-                <label for="capital-gains">Capital Gains (₹):</label>
-                <input 
-                  type="number" 
-                  id="capital-gains" 
-                  name="capital-gains" 
-                  placeholder="0"
-                  min="0"
-                  step="1"
-                  aria-describedby="capital-gains-help"
-                >
-                <small id="capital-gains-help" class="form-help">Total capital gains (taxed separately if applicable)</small>
-              </div>
-
-              <!-- TAX-018: Capital Gains Section (Collapsible) -->
-              <fieldset class="collapsible-section collapsed" id="capital-gains-section">
-                <legend class="section-toggle" aria-expanded="false" aria-controls="capital-gains-content">
-                  <span class="toggle-icon">▶</span> Capital Gains
-                </legend>
-                <div class="section-content" id="capital-gains-content" style="display: none;">
-                  <div class="form-group" data-field="stcgEquity">
-                    <label for="stcg-equity">STCG - Listed Equity (₹):</label>
-                    <input 
-                      type="number" 
-                    id="stcg-equity" 
-                    name="stcg-equity" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="stcg-equity-help"
-                  >
-                  <small id="stcg-equity-help" class="form-help">Short-term capital gains on listed equity (15% rate)</small>
-                </div>
-
-                <div class="form-group" data-field="stcgOther">
-                  <label for="stcg-other">STCG - Other Assets (₹):</label>
-                  <input 
-                    type="number" 
-                    id="stcg-other" 
-                    name="stcg-other" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="stcg-other-help"
-                  >
-                  <small id="stcg-other-help" class="form-help">Short-term capital gains on other assets (slab rates)</small>
-                </div>
-
-                <div class="form-group" data-field="ltcgEquity">
-                  <label for="ltcg-equity">LTCG - Listed Equity (₹):</label>
-                  <input 
-                    type="number" 
-                    id="ltcg-equity" 
-                    name="ltcg-equity" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="ltcg-equity-help"
-                  >
-                  <small id="ltcg-equity-help" class="form-help">Long-term capital gains on listed equity (10% above ₹1L)</small>
-                </div>
-
-                <div class="form-group" data-field="ltcgOther">
-                  <label for="ltcg-other">LTCG - Other Assets (₹):</label>
-                  <input 
-                    type="number" 
-                    id="ltcg-other" 
-                    name="ltcg-other" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="ltcg-other-help"
-                  >
-                  <small id="ltcg-other-help" class="form-help">Long-term capital gains on other assets (20% with indexation)</small>
-                </div>
-              </div>
-            </fieldset>
-
-              <!-- TAX-018: Trading Income Section (Collapsible) -->
-              <fieldset class="collapsible-section collapsed" id="trading-income-section">
-                <legend class="section-toggle" aria-expanded="false" aria-controls="trading-income-content">
-                  <span class="toggle-icon">▶</span> Trading Income
-                </legend>
-                <div class="section-content" id="trading-income-content" style="display: none;">
-                <div class="form-group" data-field="speculativeGains">
-                  <label for="speculative-gains">Speculative Gains (₹):</label>
-                  <input 
-                    type="number" 
-                    id="speculative-gains" 
-                    name="speculative-gains" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="speculative-gains-help"
-                  >
-                  <small id="speculative-gains-help" class="form-help">Intraday trading profits</small>
-                </div>
-
-                <div class="form-group" data-field="speculativeLosses">
-                  <label for="speculative-losses">Speculative Losses (₹):</label>
-                  <input 
-                    type="number" 
-                    id="speculative-losses" 
-                    name="speculative-losses" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="speculative-losses-help"
-                  >
-                  <small id="speculative-losses-help" class="form-help">Intraday trading losses</small>
-                </div>
-
-                <div class="form-group" data-field="fnoGains">
-                  <label for="fno-gains">F&O Gains (₹):</label>
-                  <input 
-                    type="number" 
-                    id="fno-gains" 
-                    name="fno-gains" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="fno-gains-help"
-                  >
-                  <small id="fno-gains-help" class="form-help">Futures & Options trading profits</small>
-                </div>
-
-                <div class="form-group" data-field="fnoLosses">
-                  <label for="fno-losses">F&O Losses (₹):</label>
-                  <input 
-                    type="number" 
-                    id="fno-losses" 
-                    name="fno-losses" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="fno-losses-help"
-                  >
-                  <small id="fno-losses-help" class="form-help">Futures & Options trading losses</small>
-                </div>
-              </div>
-            </fieldset>
-
-            <!-- TAX-008: Other Income Input (Legacy - hidden) -->
-            <div class="form-group" data-field="otherIncome" style="display: none;">
-              <label for="other-income">Other Income (₹):</label>
-              <input 
-                type="number" 
-                id="other-income" 
-                name="other-income" 
-                placeholder="0"
-                min="0"
-                step="1"
-                aria-describedby="other-income-help"
-              >
-              <small id="other-income-help" class="form-help">Interest, dividends, and other taxable income</small>
-            </div>
-
-              <!-- TAX-018: Expanded Other Income Section (Collapsible) -->
-              <fieldset class="collapsible-section collapsed" id="other-income-section">
-                <legend class="section-toggle" aria-expanded="false" aria-controls="other-income-content">
-                  <span class="toggle-icon">▶</span> Other Income
-                </legend>
-                <div class="section-content" id="other-income-content" style="display: none;">
-                <div class="form-group" data-field="interestIncome">
-                  <label for="interest-income">Interest Income (₹):</label>
-                  <input 
-                    type="number" 
-                    id="interest-income" 
-                    name="interest-income" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="interest-income-help"
-                  >
-                  <small id="interest-income-help" class="form-help">Savings account, FD, RD interest</small>
-                </div>
-
-                <div class="form-group" data-field="dividendIncome">
-                  <label for="dividend-income">Dividend Income (₹):</label>
-                  <input 
-                    type="number" 
-                    id="dividend-income" 
-                    name="dividend-income" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="dividend-income-help"
-                  >
-                  <small id="dividend-income-help" class="form-help">Dividends from stocks and mutual funds</small>
-                </div>
-
-                <div class="form-group" data-field="otherTaxable">
-                  <label for="other-taxable">Other Taxable Income (₹):</label>
-                  <input 
-                    type="number" 
-                    id="other-taxable" 
-                    name="other-taxable" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="other-taxable-help"
-                  >
-                  <small id="other-taxable-help" class="form-help">Gifts, lottery, or other taxable income</small>
-                </div>
-              </div>
-            </fieldset>
-
-            </div><!-- Close income-panel -->
-
-            <!-- TAX-021: Deductions Tab Panel -->
-            <div class="tab-panel" id="deductions-panel" role="tabpanel" aria-labelledby="deductions-tab" style="display: none;">
-              
-              <div class="regime-notice" id="new-regime-notice" style="display: none;">
-                <p>📋 <strong>Note:</strong> Under the New Tax Regime, most deductions are not available. Only the standard deduction of ₹75,000 is automatically applied.</p>
-                <p>Switch to Old Regime to claim Chapter VI-A deductions.</p>
-              </div>
-
-              <!-- TAX-010: Deductions Section moved to dedicated tab -->
-              <fieldset class="collapsible-section deductions-section" id="deductions-section">
-                <legend class="section-toggle" aria-expanded="true" aria-controls="deductions-content">
-                  <span class="toggle-icon">▼</span> Chapter VI-A Deductions
-                  <span class="regime-indicator">(Old Regime benefits from most deductions)</span>
-                </legend>
-                <div class="section-content" id="deductions-content">
-                <div class="form-group" data-field="standardDeduction">
-                  <label for="standard-deduction">Standard Deduction (₹):</label>
-                  <input 
-                    type="number" 
-                    id="standard-deduction" 
-                    name="standard-deduction" 
-                    placeholder="Auto-applied"
-                    min="0"
-                    step="1"
-                    aria-describedby="standard-deduction-help"
-                  >
-                  <small id="standard-deduction-help" class="form-help">₹50,000 (Old) / ₹75,000 (New) - Auto-applied for salaried</small>
-                </div>
-
-                <div class="form-group" data-field="section80C">
-                  <label for="section-80c">Section 80C (₹):</label>
-                  <input 
-                    type="number" 
-                    id="section-80c" 
-                    name="section-80c" 
-                    placeholder="0"
-                    min="0"
-                    max="150000"
-                    step="1"
-                    aria-describedby="section-80c-help"
-                  >
-                  <small id="section-80c-help" class="form-help">PPF, ELSS, LIC, etc. (Max ₹1,50,000)</small>
-                </div>
-
-                <div class="form-group" data-field="section80CCD1B">
-                  <label for="section-80ccd1b">Section 80CCD(1B) (₹):</label>
-                  <input 
-                    type="number" 
-                    id="section-80ccd1b" 
-                    name="section-80ccd1b" 
-                    placeholder="0"
-                    min="0"
-                    max="50000"
-                    step="1"
-                    aria-describedby="section-80ccd1b-help"
-                  >
-                  <small id="section-80ccd1b-help" class="form-help">Additional NPS contribution (Max ₹50,000)</small>
-                </div>
-
-                <div class="form-group" data-field="section80D">
-                  <label for="section-80d">Section 80D (₹):</label>
-                  <input 
-                    type="number" 
-                    id="section-80d" 
-                    name="section-80d" 
-                    placeholder="0"
-                    min="0"
-                    max="100000"
-                    step="1"
-                    aria-describedby="section-80d-help"
-                  >
-                  <small id="section-80d-help" class="form-help">Medical insurance premium (Max ₹25,000/₹50,000)</small>
-                </div>
-
-                <div class="form-group" data-field="section80E">
-                  <label for="section-80e">Section 80E (₹):</label>
-                  <input 
-                    type="number" 
-                    id="section-80e" 
-                    name="section-80e" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="section-80e-help"
-                  >
-                  <small id="section-80e-help" class="form-help">Education loan interest (No limit)</small>
-                </div>
-
-                <div class="form-group" data-field="section80G">
-                  <label for="section-80g">Section 80G (₹):</label>
-                  <input 
-                    type="number" 
-                    id="section-80g" 
-                    name="section-80g" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="section-80g-help"
-                  >
-                  <small id="section-80g-help" class="form-help">Donations to eligible charities (50%/100% eligible)</small>
-                </div>
-
-                <div class="form-group" data-field="section80TTA">
-                  <label for="section-80tta">Section 80TTA (₹):</label>
-                  <input 
-                    type="number" 
-                    id="section-80tta" 
-                    name="section-80tta" 
-                    placeholder="0"
-                    min="0"
-                    max="10000"
-                    step="1"
-                    aria-describedby="section-80tta-help"
-                  >
-                  <small id="section-80tta-help" class="form-help">Savings interest for non-seniors (Max ₹10,000)</small>
-                </div>
-
-                <div class="form-group" data-field="section80TTB">
-                  <label for="section-80ttb">Section 80TTB (₹):</label>
-                  <input 
-                    type="number" 
-                    id="section-80ttb" 
-                    name="section-80ttb" 
-                    placeholder="0"
-                    min="0"
-                    max="50000"
-                    step="1"
-                    aria-describedby="section-80ttb-help"
-                  >
-                  <small id="section-80ttb-help" class="form-help">Interest for senior citizens (Max ₹50,000)</small>
-                </div>
-
-                <div class="form-group" data-field="hra">
-                  <label for="hra">HRA Exemption (₹):</label>
-                  <input 
-                    type="number" 
-                    id="hra" 
-                    name="hra" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="hra-help"
-                  >
-                  <small id="hra-help" class="form-help">House Rent Allowance exemption</small>
-                </div>
-
-                <div class="form-group" data-field="lta">
-                  <label for="lta">LTA Exemption (₹):</label>
-                  <input 
-                    type="number" 
-                    id="lta" 
-                    name="lta" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="lta-help"
-                  >
-                  <small id="lta-help" class="form-help">Leave Travel Allowance exemption</small>
-                </div>
-
-                <div class="form-group" data-field="homeLoanInterest">
-                  <label for="home-loan-interest">Home Loan Interest (₹):</label>
-                  <input 
-                    type="number" 
-                    id="home-loan-interest" 
-                    name="home-loan-interest" 
-                    placeholder="0"
-                    min="0"
-                    max="200000"
-                    step="1"
-                    aria-describedby="home-loan-interest-help"
-                  >
-                  <small id="home-loan-interest-help" class="form-help">Section 24b - Self-occupied (Max ₹2,00,000)</small>
-                </div>
-
-                <div class="form-group" data-field="otherDeductions">
-                  <label for="other-deductions">Other Deductions (₹):</label>
-                  <input 
-                    type="number" 
-                    id="other-deductions" 
-                    name="other-deductions" 
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    aria-describedby="other-deductions-help"
-                  >
-                  <small id="other-deductions-help" class="form-help">Any other Chapter VI-A deductions</small>
-                </div>
-              </div>
-            </fieldset>
-            </div><!-- Close deductions-panel -->
-
-            <div class="form-actions">
-              <button type="submit" class="btn btn-primary">Calculate Tax</button>
-              <button type="reset" class="btn btn-secondary">Clear</button>
-            </div>
-          </form>
-
-          <div id="validation-errors" class="validation-errors" style="display: none;"></div>
+      <!-- Controls Section -->
+      <section class="controls-section">
+        <div class="control-group">
+          <label class="control-label" for="financial-year">Financial Year</label>
+          <select id="financial-year" name="financial-year" class="form-select" required>
+            <option value="2025-26" selected>2025-26</option>
+            <option value="2026-27">2026-27</option>
+          </select>
+        </div>
+        <div class="control-group" id="regime-selection-group">
+          <span class="control-label">Tax Regime</span>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="tax-regime" value="old" id="regime-old">
+              <span>Old Regime</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="tax-regime" value="new" id="regime-new" checked>
+              <span>New Regime</span>
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <button type="submit" form="tax-form" class="btn btn-primary">Calculate Tax</button>
+          <button type="reset" form="tax-form" class="btn btn-secondary">Clear</button>
         </div>
       </section>
 
+      <form id="tax-form" class="tax-form">
+        <!-- Dual Panel Layout -->
+        <div class="dual-panel">
+          <!-- Income Panel -->
+          <div class="panel income-panel">
+            <div class="panel-header income-header">
+              <span class="panel-icon">💰</span>
+              <h2 class="panel-title">Income Sources</h2>
+            </div>
+            <div class="panel-body">
+              
+              <!-- Primary Income -->
+              <details id="primary-income-section" open>
+                <summary>Primary Income</summary>
+                <div class="details-content">
+                  <div class="form-group" data-field="salary">
+                    <label class="form-label" for="salary">Salary Income</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="salary" name="salary" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="houseProperty">
+                    <label class="form-label" for="house-property">House Property Income</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="house-property" name="house-property" class="form-input" placeholder="0" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="business">
+                    <label class="form-label" for="business-income">Business/Professional Income</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="business-income" name="business-income" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                </div>
+              </details>
+
+              <!-- Capital Gains -->
+              <details id="capital-gains-section">
+                <summary>Capital Gains</summary>
+                <div class="details-content">
+                  <div class="form-group" data-field="stcgEquity">
+                    <label class="form-label" for="stcg-equity">STCG - Listed Equity</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="stcg-equity" name="stcg-equity" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="stcgOther">
+                    <label class="form-label" for="stcg-other">STCG - Other Assets</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="stcg-other" name="stcg-other" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="ltcgEquity">
+                    <label class="form-label" for="ltcg-equity">LTCG - Listed Equity</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="ltcg-equity" name="ltcg-equity" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="ltcgOther">
+                    <label class="form-label" for="ltcg-other">LTCG - Other Assets</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="ltcg-other" name="ltcg-other" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                </div>
+              </details>
+
+              <!-- Trading Income -->
+              <details id="trading-income-section">
+                <summary>Trading Income</summary>
+                <div class="details-content">
+                  <div class="form-group" data-field="speculativeGains">
+                    <label class="form-label" for="speculative-gains">Speculative Gains (Intraday)</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="speculative-gains" name="speculative-gains" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="speculativeLosses">
+                    <label class="form-label" for="speculative-losses">Speculative Losses</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="speculative-losses" name="speculative-losses" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="fnoGains">
+                    <label class="form-label" for="fno-gains">F&O Gains</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="fno-gains" name="fno-gains" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="fnoLosses">
+                    <label class="form-label" for="fno-losses">F&O Losses</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="fno-losses" name="fno-losses" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                </div>
+              </details>
+
+              <!-- Other Income -->
+              <details id="other-income-section">
+                <summary>Other Income</summary>
+                <div class="details-content">
+                  <div class="form-group" data-field="interestIncome">
+                    <label class="form-label" for="interest-income">Interest Income</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="interest-income" name="interest-income" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="dividendIncome">
+                    <label class="form-label" for="dividend-income">Dividend Income</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="dividend-income" name="dividend-income" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="otherTaxable">
+                    <label class="form-label" for="other-taxable">Other Taxable Income</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="other-taxable" name="other-taxable" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                </div>
+              </details>
+
+            </div>
+          </div>
+
+          <!-- Deductions Panel -->
+          <div class="panel deductions-panel">
+            <div class="panel-header deductions-header">
+              <span class="panel-icon">📋</span>
+              <h2 class="panel-title">Deductions</h2>
+            </div>
+            <div class="panel-body">
+              
+              <div class="regime-notice" id="new-regime-notice" style="display: none;">
+                <p>📋 Under New Regime, only standard deduction (₹75,000) is available.</p>
+              </div>
+
+              <!-- Standard Deductions -->
+              <details id="deductions-section" open>
+                <summary>Chapter VI-A Deductions</summary>
+                <div class="details-content">
+                  <div class="form-group" data-field="standardDeduction">
+                    <label class="form-label" for="standard-deduction">Standard Deduction</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="standard-deduction" name="standard-deduction" class="form-input" placeholder="Auto-applied" min="0" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="section80C">
+                    <label class="form-label" for="section-80c">Section 80C (Max ₹1.5L)</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="section-80c" name="section-80c" class="form-input" placeholder="0" min="0" max="150000" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="section80CCD1B">
+                    <label class="form-label" for="section-80ccd1b">Section 80CCD(1B) - NPS (Max ₹50K)</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="section-80ccd1b" name="section-80ccd1b" class="form-input" placeholder="0" min="0" max="50000" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="section80D">
+                    <label class="form-label" for="section-80d">Section 80D - Medical Insurance</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="section-80d" name="section-80d" class="form-input" placeholder="0" min="0" max="100000" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="section80E">
+                    <label class="form-label" for="section-80e">Section 80E - Education Loan Interest</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="section-80e" name="section-80e" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="section80G">
+                    <label class="form-label" for="section-80g">Section 80G - Donations</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="section-80g" name="section-80g" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="section80TTA">
+                    <label class="form-label" for="section-80tta">Section 80TTA (Max ₹10K)</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="section-80tta" name="section-80tta" class="form-input" placeholder="0" min="0" max="10000" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="section80TTB">
+                    <label class="form-label" for="section-80ttb">Section 80TTB - Senior Citizens (Max ₹50K)</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="section-80ttb" name="section-80ttb" class="form-input" placeholder="0" min="0" max="50000" step="1">
+                    </div>
+                  </div>
+                </div>
+              </details>
+
+              <!-- Exemptions -->
+              <details id="exemptions-section">
+                <summary>Exemptions & Other</summary>
+                <div class="details-content">
+                  <div class="form-group" data-field="hra">
+                    <label class="form-label" for="hra">HRA Exemption</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="hra" name="hra" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="lta">
+                    <label class="form-label" for="lta">LTA Exemption</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="lta" name="lta" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="homeLoanInterest">
+                    <label class="form-label" for="home-loan-interest">Home Loan Interest (Max ₹2L)</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="home-loan-interest" name="home-loan-interest" class="form-input" placeholder="0" min="0" max="200000" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group" data-field="otherDeductions">
+                    <label class="form-label" for="other-deductions">Other Deductions</label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">₹</span>
+                      <input type="number" id="other-deductions" name="other-deductions" class="form-input" placeholder="0" min="0" step="1">
+                    </div>
+                  </div>
+                </div>
+              </details>
+
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div id="validation-errors" class="validation-errors" style="display: none;"></div>
+
+      <!-- Results Section -->
       <section class="results-section" id="results-section" style="display: none;">
-        <div class="card">
-          <h2>Tax Calculation Results</h2>
-          
-          <div class="comparison-container">
-            <div class="regime-column">
-              <h3>Old Regime</h3>
+        <h2 style="margin-bottom: 1rem; font-size: 1.25rem; color: var(--gray-800);">Tax Calculation Results</h2>
+        
+        <div class="results-grid">
+          <!-- Old Regime Results -->
+          <div class="result-card old-regime">
+            <h3>🏛️ Old Regime</h3>
+            <div class="result-item">
+              <span class="result-label">Gross Income</span>
+              <span class="result-value" id="old-gross-income">₹0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Total Deductions</span>
+              <span class="result-value" id="old-total-deductions">₹0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Taxable Income</span>
+              <span class="result-value" id="old-taxable-income">₹0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Income Tax</span>
+              <span class="result-value" id="old-income-tax">₹0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Rebate u/s 87A</span>
+              <span class="result-value" id="old-rebate">₹0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Surcharge</span>
+              <span class="result-value" id="old-surcharge">₹0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Health & Edu Cess</span>
+              <span class="result-value" id="old-cess">₹0</span>
+            </div>
+            <div class="result-total">
               <div class="result-item">
-                <span class="result-label">Gross Income:</span>
-                <span class="result-value" id="old-gross-income">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Total Deductions:</span>
-                <span class="result-value" id="old-total-deductions">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Taxable Income:</span>
-                <span class="result-value" id="old-taxable-income">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Income Tax:</span>
-                <span class="result-value" id="old-income-tax">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Rebate u/s 87A:</span>
-                <span class="result-value" id="old-rebate">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Surcharge:</span>
-                <span class="result-value" id="old-surcharge">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Health & Education Cess:</span>
-                <span class="result-value" id="old-cess">₹0</span>
-              </div>
-              <div class="result-item result-total">
-                <span class="result-label">Total Tax:</span>
+                <span class="result-label">Total Tax</span>
                 <span class="result-value" id="old-total-tax">₹0</span>
               </div>
             </div>
+          </div>
 
-            <div class="regime-column">
-              <h3>New Regime</h3>
+          <!-- New Regime Results -->
+          <div class="result-card new-regime">
+            <h3>✨ New Regime</h3>
+            <div class="result-item">
+              <span class="result-label">Gross Income</span>
+              <span class="result-value" id="new-gross-income">₹0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Total Deductions</span>
+              <span class="result-value" id="new-total-deductions">₹0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Taxable Income</span>
+              <span class="result-value" id="new-taxable-income">₹0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Income Tax</span>
+              <span class="result-value" id="new-income-tax">₹0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Rebate u/s 87A</span>
+              <span class="result-value" id="new-rebate">₹0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Surcharge</span>
+              <span class="result-value" id="new-surcharge">₹0</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Health & Edu Cess</span>
+              <span class="result-value" id="new-cess">₹0</span>
+            </div>
+            <div class="result-total">
               <div class="result-item">
-                <span class="result-label">Gross Income:</span>
-                <span class="result-value" id="new-gross-income">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Total Deductions:</span>
-                <span class="result-value" id="new-total-deductions">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Taxable Income:</span>
-                <span class="result-value" id="new-taxable-income">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Income Tax:</span>
-                <span class="result-value" id="new-income-tax">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Rebate u/s 87A:</span>
-                <span class="result-value" id="new-rebate">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Surcharge:</span>
-                <span class="result-value" id="new-surcharge">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Health & Education Cess:</span>
-                <span class="result-value" id="new-cess">₹0</span>
-              </div>
-              <div class="result-item result-total">
-                <span class="result-label">Total Tax:</span>
+                <span class="result-label">Total Tax</span>
                 <span class="result-value" id="new-total-tax">₹0</span>
               </div>
             </div>
           </div>
 
-          <div class="comparison-summary">
-            <h3>Comparison Summary</h3>
-            <div class="result-item result-highlight">
-              <span class="result-label">Tax Difference:</span>
+          <!-- Comparison Summary -->
+          <div class="result-card">
+            <h3>📊 Comparison</h3>
+            <div class="result-item">
+              <span class="result-label">Tax Difference</span>
               <span class="result-value" id="tax-difference">₹0</span>
             </div>
             <div class="result-item">
-              <span class="result-label">More Beneficial Regime:</span>
+              <span class="result-label">Better Regime</span>
               <span class="result-value" id="beneficial-regime">-</span>
             </div>
           </div>
@@ -627,66 +417,9 @@
       </section>
     </main>
 
-    <!-- TAX-019: Feature Cards Section -->
-    <section class="features-section">
-      <div class="container">
-        <h2>Why Use Our Tax Calculator?</h2>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">📊</div>
-            <h3>Compare Regimes</h3>
-            <p>Instantly compare Old vs New tax regimes to find the best option for your income profile.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">💰</div>
-            <h3>Accurate Calculations</h3>
-            <p>FY 2025-26 and 2026-27 tax slabs with all deductions, rebates, surcharges, and cess included.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🔒</div>
-            <h3>100% Private</h3>
-            <p>All calculations happen in your browser. No data is sent to any server or stored anywhere.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📱</div>
-            <h3>Mobile Friendly</h3>
-            <p>Works on all devices - desktop, tablet, and mobile - for convenient tax planning anywhere.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAX-019: Enhanced Footer -->
-    <footer class="footer">
-      <div class="footer-content">
-        <div class="footer-column">
-          <h4>Indian Tax Calculator</h4>
-          <p>Free, accurate, and private income tax calculator for Indian taxpayers. Compare Old and New tax regimes instantly.</p>
-        </div>
-        <div class="footer-column">
-          <h4>Quick Links</h4>
-          <ul>
-            <li><a href="#input-section">Calculate Tax</a></li>
-            <li><a href="#results-section">View Results</a></li>
-            <li><a href="https://incometaxindia.gov.in" target="_blank" rel="noopener">Income Tax India</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h4>Tax Resources</h4>
-          <ul>
-            <li><a href="https://www.incometax.gov.in/iec/foportal/" target="_blank" rel="noopener">e-Filing Portal</a></li>
-            <li><a href="https://tin.tin.nsdl.com/pan/index.html" target="_blank" rel="noopener">PAN Card Services</a></li>
-            <li><a href="https://www.incometaxindia.gov.in/charts%20%20tables/tax%20rates.htm" target="_blank" rel="noopener">Tax Rates</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h4>Disclaimer</h4>
-          <p>This calculator is for informational purposes only. Consult a tax professional for personalized advice.</p>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 Indian Income Tax Calculator. All calculations are performed locally in your browser.</p>
-      </div>
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Indian Income Tax Calculator &copy; 2026 | All calculations are performed locally. | <a href="https://incometaxindia.gov.in" target="_blank" rel="noopener">Official Tax Portal</a></p>
     </footer>
   </div>
 

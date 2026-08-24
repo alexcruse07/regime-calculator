@@ -7,7 +7,6 @@ import { initializeFormHandlers } from '../ui/components/form-handler.js';
 import { initializeViewListeners, resetView } from '../ui/views/appView.js';
 import { subscribeToState } from '../app/tax-orchestration/coordinator.js';
 import { initializeRegimeSelector } from '../ui/components/regime-selector.js';
-import { initializeTabs, updateDeductionsTabForRegime } from '../ui/components/tab-navigation.js';
 import { appState } from './state/appState.js';
 import { updateFieldVisibility } from './form-visibility/form-visibility-controller.js';
 
@@ -35,10 +34,10 @@ function initializeApp() {
     console.log('Setting up regime selector...');
     const unsubscribeRegimeSelector = initializeRegimeSelector(handleRegimeChange);
 
-    // Step 4: Initialize tab navigation (TAX-021)
-    console.log('Setting up tab navigation...');
-    initializeTabs();
-    initializeCollapsibleSections();
+    // Step 4: Initialize FY listener for header badge sync
+    console.log('Setting up FY listener...');
+    initializeFYListener();
+    initializeNewRegimeNotice();
 
     // Step 5: Initialize view listeners (state → UI updates)
     console.log('Setting up view listeners...');
@@ -47,7 +46,7 @@ function initializeApp() {
     // Step 6: Initialize field visibility based on default regime
     const initialState = appState.getState();
     updateFieldVisibility(initialState.selectedRegime, initialState.financialYear);
-    updateDeductionsTabForRegime(initialState.selectedRegime);
+    updateNewRegimeNotice(initialState.selectedRegime);
 
     // Step 7: Reset view to initial state
     console.log('Resetting view to initial state...');
@@ -85,50 +84,52 @@ function handleRegimeChange(newRegime) {
   // Update field visibility based on new regime
   updateFieldVisibility(newRegime, state.financialYear);
 
-  // Update deductions tab based on regime (TAX-021)
-  updateDeductionsTabForRegime(newRegime);
+  // Update new regime notice
+  updateNewRegimeNotice(newRegime);
 
   // Clear any previous calculation results since regime changed
   appState.clearCalculations();
 }
 
 /**
- * TAX-018: Initialize collapsible sections
- * Sets up click handlers for section toggles
+ * Initialize FY listener for header badge sync
  */
-function initializeCollapsibleSections() {
-  const toggles = document.querySelectorAll('.section-toggle');
+function initializeFYListener() {
+  const fySelect = document.getElementById('financial-year');
+  const fyBadge = document.getElementById('current-fy');
   
-  toggles.forEach(toggle => {
-    toggle.addEventListener('click', () => {
-      const section = toggle.closest('.collapsible-section');
-      const content = section.querySelector('.section-content');
-      const icon = toggle.querySelector('.toggle-icon');
-      const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
-      
-      // Toggle state
-      toggle.setAttribute('aria-expanded', !isExpanded);
-      section.classList.toggle('collapsed', isExpanded);
-      
-      // Toggle content visibility with animation
-      if (isExpanded) {
-        content.style.display = 'none';
-        icon.textContent = '▶';
-      } else {
-        content.style.display = 'grid';
-        icon.textContent = '▼';
-      }
-    });
+  if (fySelect && fyBadge) {
+    // Set initial value
+    fyBadge.textContent = fySelect.value;
     
-    // Keyboard accessibility
-    toggle.setAttribute('tabindex', '0');
-    toggle.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggle.click();
-      }
+    fySelect.addEventListener('change', (e) => {
+      fyBadge.textContent = e.target.value;
+      // Also update app state
+      appState.setFinancialYear(e.target.value);
     });
-  });
+  }
+}
+
+/**
+ * Initialize new regime notice visibility handler
+ */
+function initializeNewRegimeNotice() {
+  const notice = document.getElementById('new-regime-notice');
+  if (notice) {
+    const state = appState.getState();
+    notice.style.display = state.selectedRegime === 'new' ? 'block' : 'none';
+  }
+}
+
+/**
+ * Update new regime notice visibility
+ * @param {string} regime - Current regime
+ */
+function updateNewRegimeNotice(regime) {
+  const notice = document.getElementById('new-regime-notice');
+  if (notice) {
+    notice.style.display = regime === 'new' ? 'block' : 'none';
+  }
 }
 
 /**
