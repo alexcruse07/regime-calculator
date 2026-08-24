@@ -98,6 +98,34 @@ export function handleFormReset(event) {
   // Reset form elements
   const form = event.target;
   form.reset();
+
+  // Reset controls outside the form
+  const fySelect = document.getElementById('financial-year');
+  if (fySelect) {
+    fySelect.value = '2025-26';
+  }
+
+  // Reset tax regime to new (default)
+  const regimeNew = document.getElementById('regime-new');
+  const regimeOld = document.getElementById('regime-old');
+  if (regimeNew) {
+    regimeNew.checked = true;
+  }
+  if (regimeOld) {
+    regimeOld.checked = false;
+  }
+
+  // Hide results section
+  const resultsSection = document.getElementById('results-section');
+  if (resultsSection) {
+    resultsSection.style.display = 'none';
+  }
+
+  // Clear validation errors
+  const errorContainer = document.getElementById('validation-errors');
+  if (errorContainer) {
+    clearFormErrors(errorContainer);
+  }
 }
 
 /**
