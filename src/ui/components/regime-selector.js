@@ -146,8 +146,8 @@ export function updateAvailableRegimes(availableRegimes) {
 export function resetRegimeSelector() {
   setSelectedRegime(DEFAULT_REGIME);
 
-  // Re-enable all options
-  updateAvailableRegimes([REGIMES.OLD, REGIMES.NEW, REGIMES.COMPARE]);
+  // Re-enable all options (only Old and New now)
+  updateAvailableRegimes([REGIMES.OLD, REGIMES.NEW]);
 }
 
 /**

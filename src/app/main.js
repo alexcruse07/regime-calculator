@@ -7,6 +7,7 @@ import { initializeFormHandlers } from '../ui/components/form-handler.js';
 import { initializeViewListeners, resetView } from '../ui/views/appView.js';
 import { subscribeToState } from '../app/tax-orchestration/coordinator.js';
 import { initializeRegimeSelector } from '../ui/components/regime-selector.js';
+import { initializeTabs, updateDeductionsTabForRegime } from '../ui/components/tab-navigation.js';
 import { appState } from './state/appState.js';
 import { updateFieldVisibility } from './form-visibility/form-visibility-controller.js';
 
@@ -34,19 +35,25 @@ function initializeApp() {
     console.log('Setting up regime selector...');
     const unsubscribeRegimeSelector = initializeRegimeSelector(handleRegimeChange);
 
-    // Step 4: Initialize view listeners (state → UI updates)
+    // Step 4: Initialize tab navigation (TAX-021)
+    console.log('Setting up tab navigation...');
+    initializeTabs();
+    initializeCollapsibleSections();
+
+    // Step 5: Initialize view listeners (state → UI updates)
     console.log('Setting up view listeners...');
     const unsubscribeViewListeners = initializeViewListeners(subscribeToState);
 
-    // Step 5: Initialize field visibility based on default regime
+    // Step 6: Initialize field visibility based on default regime
     const initialState = appState.getState();
     updateFieldVisibility(initialState.selectedRegime, initialState.financialYear);
+    updateDeductionsTabForRegime(initialState.selectedRegime);
 
-    // Step 6: Reset view to initial state
+    // Step 7: Reset view to initial state
     console.log('Resetting view to initial state...');
     resetView();
 
-    // Step 7: Log successful initialization
+    // Step 8: Log successful initialization
     console.log('✓ Application initialized successfully');
 
     // Return cleanup function for testing/teardown
@@ -78,8 +85,50 @@ function handleRegimeChange(newRegime) {
   // Update field visibility based on new regime
   updateFieldVisibility(newRegime, state.financialYear);
 
+  // Update deductions tab based on regime (TAX-021)
+  updateDeductionsTabForRegime(newRegime);
+
   // Clear any previous calculation results since regime changed
   appState.clearCalculations();
+}
+
+/**
+ * TAX-018: Initialize collapsible sections
+ * Sets up click handlers for section toggles
+ */
+function initializeCollapsibleSections() {
+  const toggles = document.querySelectorAll('.section-toggle');
+  
+  toggles.forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const section = toggle.closest('.collapsible-section');
+      const content = section.querySelector('.section-content');
+      const icon = toggle.querySelector('.toggle-icon');
+      const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+      
+      // Toggle state
+      toggle.setAttribute('aria-expanded', !isExpanded);
+      section.classList.toggle('collapsed', isExpanded);
+      
+      // Toggle content visibility with animation
+      if (isExpanded) {
+        content.style.display = 'none';
+        icon.textContent = '▶';
+      } else {
+        content.style.display = 'grid';
+        icon.textContent = '▼';
+      }
+    });
+    
+    // Keyboard accessibility
+    toggle.setAttribute('tabindex', '0');
+    toggle.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggle.click();
+      }
+    });
+  });
 }
 
 /**

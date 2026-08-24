@@ -1,9 +1,26 @@
 /**
  * Financial Years Rules Index
  * Exports tax rules for all supported financial years
+ * TAX-020: Added support for FY 2025-26 and 2026-27
  */
 
-import { oldRegimeRules, newRegimeRules, seniorCitizenRules } from './fy-2024-25.js';
+import {
+  oldRegimeRules as oldRegime2024,
+  newRegimeRules as newRegime2024,
+  seniorCitizenRules as senior2024,
+} from './fy-2024-25.js';
+
+import {
+  oldRegimeRules as oldRegime2025,
+  newRegimeRules as newRegime2025,
+  seniorCitizenRules as senior2025,
+} from './fy-2025-26.js';
+
+import {
+  oldRegimeRules as oldRegime2026,
+  newRegimeRules as newRegime2026,
+  seniorCitizenRules as senior2026,
+} from './fy-2026-27.js';
 
 /**
  * Map of financial year to rules
@@ -11,11 +28,20 @@ import { oldRegimeRules, newRegimeRules, seniorCitizenRules } from './fy-2024-25
  */
 const rulesMap = {
   '2024-25': {
-    oldRegime: oldRegimeRules,
-    newRegime: newRegimeRules,
-    seniorCitizen: seniorCitizenRules,
+    oldRegime: oldRegime2024,
+    newRegime: newRegime2024,
+    seniorCitizen: senior2024,
   },
-  // Future financial years will be added here
+  '2025-26': {
+    oldRegime: oldRegime2025,
+    newRegime: newRegime2025,
+    seniorCitizen: senior2025,
+  },
+  '2026-27': {
+    oldRegime: oldRegime2026,
+    newRegime: newRegime2026,
+    seniorCitizen: senior2026,
+  },
 };
 
 /**

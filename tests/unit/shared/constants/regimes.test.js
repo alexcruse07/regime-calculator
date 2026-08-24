@@ -1,6 +1,7 @@
 /**
  * Tests for Regime Constants
  * Unit tests for src/shared/constants/regimes.js
+ * TAX-017: Updated to reflect removal of Compare Both option
  */
 
 import { describe, it, expect } from 'vitest';
@@ -25,28 +26,31 @@ describe('Regime Constants', () => {
       expect(REGIMES.NEW).toBe('new');
     });
 
-    it('should have COMPARE regime defined', () => {
-      expect(REGIMES.COMPARE).toBe('compare');
+    // TAX-017: Compare Both removed
+    it('should NOT have COMPARE regime defined', () => {
+      expect(REGIMES.COMPARE).toBeUndefined();
     });
 
     it('should be frozen (immutable)', () => {
       expect(Object.isFrozen(REGIMES)).toBe(true);
     });
 
-    it('should have exactly 3 regimes', () => {
-      expect(Object.keys(REGIMES).length).toBe(3);
+    // TAX-017: Only 2 regimes now
+    it('should have exactly 2 regimes', () => {
+      expect(Object.keys(REGIMES).length).toBe(2);
     });
   });
 
   describe('VALID_REGIMES array', () => {
-    it('should contain all three regimes', () => {
+    // TAX-017: Only old and new regimes
+    it('should contain only old and new regimes', () => {
       expect(VALID_REGIMES).toContain('old');
       expect(VALID_REGIMES).toContain('new');
-      expect(VALID_REGIMES).toContain('compare');
+      expect(VALID_REGIMES).not.toContain('compare');
     });
 
-    it('should have exactly 3 values', () => {
-      expect(VALID_REGIMES.length).toBe(3);
+    it('should have exactly 2 values', () => {
+      expect(VALID_REGIMES.length).toBe(2);
     });
 
     it('should be frozen (immutable)', () => {
@@ -55,8 +59,9 @@ describe('Regime Constants', () => {
   });
 
   describe('DEFAULT_REGIME', () => {
-    it('should default to compare', () => {
-      expect(DEFAULT_REGIME).toBe('compare');
+    // TAX-017: Default changed to 'new'
+    it('should default to new', () => {
+      expect(DEFAULT_REGIME).toBe('new');
     });
 
     it('should be a valid regime', () => {
@@ -73,8 +78,9 @@ describe('Regime Constants', () => {
       expect(REGIME_LABELS.new).toBe('New Regime');
     });
 
-    it('should have label for compare regime', () => {
-      expect(REGIME_LABELS.compare).toBe('Compare Both');
+    // TAX-017: Compare removed
+    it('should NOT have label for compare regime', () => {
+      expect(REGIME_LABELS.compare).toBeUndefined();
     });
 
     it('should be frozen (immutable)', () => {
@@ -88,11 +94,12 @@ describe('Regime Constants', () => {
     });
 
     it('should have hint for new regime', () => {
-      expect(REGIME_HINTS.new).toBe('Lower rates, fewer deductions');
+      expect(REGIME_HINTS.new).toBe('Lower rates, standard deduction only');
     });
 
-    it('should have hint for compare regime', () => {
-      expect(REGIME_HINTS.compare).toBe('See which is better for you');
+    // TAX-017: Compare removed
+    it('should NOT have hint for compare regime', () => {
+      expect(REGIME_HINTS.compare).toBeUndefined();
     });
 
     it('should be frozen (immutable)', () => {
@@ -111,8 +118,9 @@ describe('isValidRegime function', () => {
       expect(isValidRegime('new')).toBe(true);
     });
 
-    it('should return true for "compare"', () => {
-      expect(isValidRegime('compare')).toBe(true);
+    // TAX-017: compare is no longer valid
+    it('should return false for "compare"', () => {
+      expect(isValidRegime('compare')).toBe(false);
     });
   });
 
@@ -166,8 +174,9 @@ describe('getRegimeLabel function', () => {
     expect(getRegimeLabel('new')).toBe('New Regime');
   });
 
-  it('should return "Compare Both" for compare', () => {
-    expect(getRegimeLabel('compare')).toBe('Compare Both');
+  // TAX-017: compare returns Unknown now
+  it('should return "Unknown" for compare (removed)', () => {
+    expect(getRegimeLabel('compare')).toBe('Unknown');
   });
 
   it('should return "Unknown" for invalid regime', () => {
@@ -189,11 +198,12 @@ describe('getRegimeHint function', () => {
   });
 
   it('should return hint for new regime', () => {
-    expect(getRegimeHint('new')).toBe('Lower rates, fewer deductions');
+    expect(getRegimeHint('new')).toBe('Lower rates, standard deduction only');
   });
 
-  it('should return hint for compare regime', () => {
-    expect(getRegimeHint('compare')).toBe('See which is better for you');
+  // TAX-017: compare returns empty now
+  it('should return empty string for compare (removed)', () => {
+    expect(getRegimeHint('compare')).toBe('');
   });
 
   it('should return empty string for invalid regime', () => {

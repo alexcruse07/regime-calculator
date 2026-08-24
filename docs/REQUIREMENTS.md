@@ -806,8 +806,8 @@ Implement a dark-themed footer with:
 
 **Column 4 - Contact Developer:**
 - Developer: Rajesh Jaiswal
-- Email: rajesh.jaiswal.dev@gmail.com
-- Phone: +91 98765 43210
+- Email: jaiswal058009@gmail.com
+- Phone: +919632101040
 
 **Footer Bottom:**
 - Copyright: "© 2025 Tax Calculator. All rights reserved."

@@ -28,15 +28,25 @@
           <h2>Enter Your Details</h2>
           
           <form id="tax-form" class="tax-form">
+            <!-- TAX-021: Tab Navigation -->
+            <div class="tabs-container" role="tablist" aria-label="Input sections">
+              <button type="button" class="tab-button active" role="tab" aria-selected="true" aria-controls="income-panel" id="income-tab" data-tab="income">
+                💰 Income
+              </button>
+              <button type="button" class="tab-button" role="tab" aria-selected="false" aria-controls="deductions-panel" id="deductions-tab" data-tab="deductions">
+                📋 Deductions
+              </button>
+            </div>
             <div class="form-group">
               <label for="financial-year">Financial Year:</label>
               <select id="financial-year" name="financial-year" required>
                 <option value="">Select a financial year</option>
-                <option value="2024-25">2024-25 (FY 2024-2025)</option>
+                <option value="2025-26" selected>2025-26 (FY 2025-2026)</option>
+                <option value="2026-27">2026-27 (FY 2026-2027)</option>
               </select>
             </div>
 
-            <!-- TAX-009: Regime Selection -->
+            <!-- TAX-009/TAX-017: Regime Selection (Compare Both removed) -->
             <div class="form-group regime-selection" id="regime-selection-group">
               <fieldset>
                 <legend>Select Tax Regime:</legend>
@@ -47,88 +57,96 @@
                     <span class="regime-hint">With deductions & exemptions</span>
                   </label>
                   <label class="regime-option">
-                    <input type="radio" name="tax-regime" value="new" id="regime-new">
+                    <input type="radio" name="tax-regime" value="new" id="regime-new" checked>
                     <span class="regime-label">New Regime</span>
-                    <span class="regime-hint">Lower rates, fewer deductions</span>
-                  </label>
-                  <label class="regime-option">
-                    <input type="radio" name="tax-regime" value="compare" id="regime-compare" checked>
-                    <span class="regime-label">Compare Both</span>
-                    <span class="regime-hint">See which is better for you</span>
+                    <span class="regime-hint">Lower rates, standard deduction only</span>
                   </label>
                 </div>
+                <p class="regime-note">💡 Switch between regimes to compare tax liability</p>
               </fieldset>
             </div>
 
-            <!-- TAX-004: Salary Income Input -->
-            <div class="form-group" data-field="salary">
-              <label for="salary">Salary Income (₹):</label>
-              <input 
-                type="number" 
-                id="salary" 
-                name="salary" 
-                placeholder="0"
-                min="0"
-                step="1"
-                aria-describedby="salary-help"
-              >
-              <small id="salary-help" class="form-help">Annual salary before deductions</small>
-            </div>
+            <!-- TAX-021: Income Tab Panel -->
+            <div class="tab-panel active" id="income-panel" role="tabpanel" aria-labelledby="income-tab">
+              
+              <!-- TAX-018: Primary Income Section (Collapsible) -->
+              <fieldset class="collapsible-section" id="primary-income-section">
+                <legend class="section-toggle" aria-expanded="true" aria-controls="primary-income-content">
+                  <span class="toggle-icon">▼</span> Primary Income
+                </legend>
+                <div class="section-content" id="primary-income-content">
 
-            <!-- TAX-005: House Property Income Input -->
-            <div class="form-group" data-field="houseProperty">
-              <label for="house-property">House Property Income (₹):</label>
-              <input 
-                type="number" 
-                id="house-property" 
-                name="house-property" 
-                placeholder="0"
-                step="1"
-                aria-describedby="house-property-help"
-              >
-              <small id="house-property-help" class="form-help">Net income from house property (can be negative for loss)</small>
-            </div>
+                  <!-- TAX-004: Salary Income Input -->
+                  <div class="form-group" data-field="salary">
+                    <label for="salary">Salary Income (₹):</label>
+                    <input 
+                      type="number" 
+                      id="salary" 
+                      name="salary" 
+                      placeholder="0"
+                      min="0"
+                      step="1"
+                      aria-describedby="salary-help"
+                    >
+                    <small id="salary-help" class="form-help">Annual salary before deductions</small>
+                  </div>
 
-            <!-- TAX-006: Business/Professional Income Input -->
-            <div class="form-group" data-field="business">
-              <label for="business-income">Business/Professional Income (₹):</label>
-              <input 
-                type="number" 
-                id="business-income" 
-                name="business-income" 
-                placeholder="0"
-                min="0"
-                step="1"
-                aria-describedby="business-income-help"
-              >
-              <small id="business-income-help" class="form-help">Income from business or profession</small>
-            </div>
+                  <!-- TAX-005: House Property Income Input -->
+                  <div class="form-group" data-field="houseProperty">
+                    <label for="house-property">House Property Income (₹):</label>
+                    <input 
+                      type="number" 
+                      id="house-property" 
+                      name="house-property" 
+                      placeholder="0"
+                      step="1"
+                      aria-describedby="house-property-help"
+                    >
+                    <small id="house-property-help" class="form-help">Net income from house property (can be negative for loss)</small>
+                  </div>
 
-            <!-- TAX-007: Capital Gains Input (Legacy - hidden, used for backward compatibility) -->
-            <div class="form-group" data-field="capitalGains" style="display: none;">
-              <label for="capital-gains">Capital Gains (₹):</label>
-              <input 
-                type="number" 
-                id="capital-gains" 
-                name="capital-gains" 
-                placeholder="0"
-                min="0"
-                step="1"
-                aria-describedby="capital-gains-help"
-              >
-              <small id="capital-gains-help" class="form-help">Total capital gains (taxed separately if applicable)</small>
-            </div>
+                  <!-- TAX-006: Business/Professional Income Input -->
+                  <div class="form-group" data-field="business">
+                    <label for="business-income">Business/Professional Income (₹):</label>
+                    <input 
+                      type="number" 
+                      id="business-income" 
+                      name="business-income" 
+                      placeholder="0"
+                      min="0"
+                      step="1"
+                      aria-describedby="business-income-help"
+                    >
+                    <small id="business-income-help" class="form-help">Income from business or profession</small>
+                  </div>
+                </div>
+              </fieldset>
 
-            <!-- TAX-010: Granular Capital Gains Section -->
-            <fieldset class="collapsible-section" id="capital-gains-section">
-              <legend class="section-toggle" aria-expanded="true" aria-controls="capital-gains-content">
-                <span class="toggle-icon">▼</span> Capital Gains
-              </legend>
-              <div class="section-content" id="capital-gains-content">
-                <div class="form-group" data-field="stcgEquity">
-                  <label for="stcg-equity">STCG - Listed Equity (₹):</label>
-                  <input 
-                    type="number" 
+              <!-- TAX-007: Capital Gains Input (Legacy - hidden, used for backward compatibility) -->
+              <div class="form-group" data-field="capitalGains" style="display: none;">
+                <label for="capital-gains">Capital Gains (₹):</label>
+                <input 
+                  type="number" 
+                  id="capital-gains" 
+                  name="capital-gains" 
+                  placeholder="0"
+                  min="0"
+                  step="1"
+                  aria-describedby="capital-gains-help"
+                >
+                <small id="capital-gains-help" class="form-help">Total capital gains (taxed separately if applicable)</small>
+              </div>
+
+              <!-- TAX-018: Capital Gains Section (Collapsible) -->
+              <fieldset class="collapsible-section collapsed" id="capital-gains-section">
+                <legend class="section-toggle" aria-expanded="false" aria-controls="capital-gains-content">
+                  <span class="toggle-icon">▶</span> Capital Gains
+                </legend>
+                <div class="section-content" id="capital-gains-content" style="display: none;">
+                  <div class="form-group" data-field="stcgEquity">
+                    <label for="stcg-equity">STCG - Listed Equity (₹):</label>
+                    <input 
+                      type="number" 
                     id="stcg-equity" 
                     name="stcg-equity" 
                     placeholder="0"
@@ -183,12 +201,12 @@
               </div>
             </fieldset>
 
-            <!-- TAX-010: Trading Income Section -->
-            <fieldset class="collapsible-section" id="trading-income-section">
-              <legend class="section-toggle" aria-expanded="true" aria-controls="trading-income-content">
-                <span class="toggle-icon">▼</span> Trading Income
-              </legend>
-              <div class="section-content" id="trading-income-content">
+              <!-- TAX-018: Trading Income Section (Collapsible) -->
+              <fieldset class="collapsible-section collapsed" id="trading-income-section">
+                <legend class="section-toggle" aria-expanded="false" aria-controls="trading-income-content">
+                  <span class="toggle-icon">▶</span> Trading Income
+                </legend>
+                <div class="section-content" id="trading-income-content" style="display: none;">
                 <div class="form-group" data-field="speculativeGains">
                   <label for="speculative-gains">Speculative Gains (₹):</label>
                   <input 
@@ -262,12 +280,12 @@
               <small id="other-income-help" class="form-help">Interest, dividends, and other taxable income</small>
             </div>
 
-            <!-- TAX-010: Expanded Other Income Section -->
-            <fieldset class="collapsible-section" id="other-income-section">
-              <legend class="section-toggle" aria-expanded="true" aria-controls="other-income-content">
-                <span class="toggle-icon">▼</span> Other Income
-              </legend>
-              <div class="section-content" id="other-income-content">
+              <!-- TAX-018: Expanded Other Income Section (Collapsible) -->
+              <fieldset class="collapsible-section collapsed" id="other-income-section">
+                <legend class="section-toggle" aria-expanded="false" aria-controls="other-income-content">
+                  <span class="toggle-icon">▶</span> Other Income
+                </legend>
+                <div class="section-content" id="other-income-content" style="display: none;">
                 <div class="form-group" data-field="interestIncome">
                   <label for="interest-income">Interest Income (₹):</label>
                   <input 
@@ -312,13 +330,23 @@
               </div>
             </fieldset>
 
-            <!-- TAX-010: Deductions Section -->
-            <fieldset class="collapsible-section deductions-section" id="deductions-section">
-              <legend class="section-toggle" aria-expanded="true" aria-controls="deductions-content">
-                <span class="toggle-icon">▼</span> Deductions
-                <span class="regime-indicator">(Old Regime benefits from most deductions)</span>
-              </legend>
-              <div class="section-content" id="deductions-content">
+            </div><!-- Close income-panel -->
+
+            <!-- TAX-021: Deductions Tab Panel -->
+            <div class="tab-panel" id="deductions-panel" role="tabpanel" aria-labelledby="deductions-tab" style="display: none;">
+              
+              <div class="regime-notice" id="new-regime-notice" style="display: none;">
+                <p>📋 <strong>Note:</strong> Under the New Tax Regime, most deductions are not available. Only the standard deduction of ₹75,000 is automatically applied.</p>
+                <p>Switch to Old Regime to claim Chapter VI-A deductions.</p>
+              </div>
+
+              <!-- TAX-010: Deductions Section moved to dedicated tab -->
+              <fieldset class="collapsible-section deductions-section" id="deductions-section">
+                <legend class="section-toggle" aria-expanded="true" aria-controls="deductions-content">
+                  <span class="toggle-icon">▼</span> Chapter VI-A Deductions
+                  <span class="regime-indicator">(Old Regime benefits from most deductions)</span>
+                </legend>
+                <div class="section-content" id="deductions-content">
                 <div class="form-group" data-field="standardDeduction">
                   <label for="standard-deduction">Standard Deduction (₹):</label>
                   <input 
@@ -494,6 +522,7 @@
                 </div>
               </div>
             </fieldset>
+            </div><!-- Close deductions-panel -->
 
             <div class="form-actions">
               <button type="submit" class="btn btn-primary">Calculate Tax</button>
@@ -598,8 +627,66 @@
       </section>
     </main>
 
+    <!-- TAX-019: Feature Cards Section -->
+    <section class="features-section">
+      <div class="container">
+        <h2>Why Use Our Tax Calculator?</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Compare Regimes</h3>
+            <p>Instantly compare Old vs New tax regimes to find the best option for your income profile.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💰</div>
+            <h3>Accurate Calculations</h3>
+            <p>FY 2025-26 and 2026-27 tax slabs with all deductions, rebates, surcharges, and cess included.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>100% Private</h3>
+            <p>All calculations happen in your browser. No data is sent to any server or stored anywhere.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>Mobile Friendly</h3>
+            <p>Works on all devices - desktop, tablet, and mobile - for convenient tax planning anywhere.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAX-019: Enhanced Footer -->
     <footer class="footer">
-      <p>&copy; 2026 Indian Income Tax Calculator. For informational purposes only.</p>
+      <div class="footer-content">
+        <div class="footer-column">
+          <h4>Indian Tax Calculator</h4>
+          <p>Free, accurate, and private income tax calculator for Indian taxpayers. Compare Old and New tax regimes instantly.</p>
+        </div>
+        <div class="footer-column">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#input-section">Calculate Tax</a></li>
+            <li><a href="#results-section">View Results</a></li>
+            <li><a href="https://incometaxindia.gov.in" target="_blank" rel="noopener">Income Tax India</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Tax Resources</h4>
+          <ul>
+            <li><a href="https://www.incometax.gov.in/iec/foportal/" target="_blank" rel="noopener">e-Filing Portal</a></li>
+            <li><a href="https://tin.tin.nsdl.com/pan/index.html" target="_blank" rel="noopener">PAN Card Services</a></li>
+            <li><a href="https://www.incometaxindia.gov.in/charts%20%20tables/tax%20rates.htm" target="_blank" rel="noopener">Tax Rates</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Disclaimer</h4>
+          <p>This calculator is for informational purposes only. Consult a tax professional for personalized advice.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Indian Income Tax Calculator. All calculations are performed locally in your browser.</p>
+      </div>
     </footer>
   </div>
 

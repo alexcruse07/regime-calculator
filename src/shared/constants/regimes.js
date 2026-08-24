@@ -1,6 +1,8 @@
 /**
  * Tax Regime Constants
  * Defines supported tax regimes and related constants
+ * 
+ * TAX-017: Removed Compare Both option - users select Old or New regime only
  *
  * @module shared/constants/regimes
  */
@@ -12,7 +14,6 @@
 export const REGIMES = Object.freeze({
   OLD: 'old',
   NEW: 'new',
-  COMPARE: 'compare',
 });
 
 /**
@@ -22,14 +23,13 @@ export const REGIMES = Object.freeze({
 export const VALID_REGIMES = Object.freeze([
   REGIMES.OLD,
   REGIMES.NEW,
-  REGIMES.COMPARE,
 ]);
 
 /**
- * Default selected regime
+ * Default selected regime (New regime is default from FY 2023-24)
  * @type {string}
  */
-export const DEFAULT_REGIME = REGIMES.COMPARE;
+export const DEFAULT_REGIME = REGIMES.NEW;
 
 /**
  * Human-readable labels for each regime
@@ -38,7 +38,6 @@ export const DEFAULT_REGIME = REGIMES.COMPARE;
 export const REGIME_LABELS = Object.freeze({
   [REGIMES.OLD]: 'Old Regime',
   [REGIMES.NEW]: 'New Regime',
-  [REGIMES.COMPARE]: 'Compare Both',
 });
 
 /**
@@ -47,8 +46,7 @@ export const REGIME_LABELS = Object.freeze({
  */
 export const REGIME_HINTS = Object.freeze({
   [REGIMES.OLD]: 'With deductions & exemptions',
-  [REGIMES.NEW]: 'Lower rates, fewer deductions',
-  [REGIMES.COMPARE]: 'See which is better for you',
+  [REGIMES.NEW]: 'Lower rates, standard deduction only',
 });
 
 /**

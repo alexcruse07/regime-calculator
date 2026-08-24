@@ -1,6 +1,7 @@
 /**
  * Tests for Regime Selector Component
  * Unit tests for src/ui/components/regime-selector.js
+ * TAX-017: Updated to reflect removal of Compare Both option
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
@@ -17,6 +18,7 @@ import { DEFAULT_REGIME } from '../../../../src/shared/constants/regimes.js';
 
 /**
  * Test Helper: Set up DOM with regime selector
+ * TAX-017: Only old and new regimes, new is default
  */
 function setupRegimeSelectorDOM() {
   document.body.innerHTML = `
@@ -30,14 +32,9 @@ function setupRegimeSelectorDOM() {
             <span class="regime-hint">With deductions & exemptions</span>
           </label>
           <label class="regime-option">
-            <input type="radio" name="tax-regime" value="new" id="regime-new">
+            <input type="radio" name="tax-regime" value="new" id="regime-new" checked>
             <span class="regime-label">New Regime</span>
-            <span class="regime-hint">Lower rates, fewer deductions</span>
-          </label>
-          <label class="regime-option">
-            <input type="radio" name="tax-regime" value="compare" id="regime-compare" checked>
-            <span class="regime-label">Compare Both</span>
-            <span class="regime-hint">See which is better for you</span>
+            <span class="regime-hint">Lower rates, standard deduction only</span>
           </label>
         </div>
       </fieldset>
@@ -67,24 +64,24 @@ describe('Regime Selector Component - Rendering Tests', () => {
     expect(element?.id).toBe('regime-selection-group');
   });
 
-  it('should have three radio options', () => {
+  // TAX-017: Only 2 radio options now
+  it('should have two radio options', () => {
     const radios = document.querySelectorAll('input[name="tax-regime"]');
-    expect(radios.length).toBe(3);
+    expect(radios.length).toBe(2);
   });
 
   it('should have correct radio values', () => {
     const oldRadio = document.getElementById('regime-old');
     const newRadio = document.getElementById('regime-new');
-    const compareRadio = document.getElementById('regime-compare');
 
     expect(oldRadio?.getAttribute('value')).toBe('old');
     expect(newRadio?.getAttribute('value')).toBe('new');
-    expect(compareRadio?.getAttribute('value')).toBe('compare');
   });
 
-  it('should have compare checked by default', () => {
-    const compareRadio = document.getElementById('regime-compare');
-    expect(compareRadio?.checked).toBe(true);
+  // TAX-017: New regime is default now
+  it('should have new checked by default', () => {
+    const newRadio = document.getElementById('regime-new');
+    expect(newRadio?.checked).toBe(true);
   });
 
   it('should have radiogroup role on options container', () => {
@@ -102,8 +99,9 @@ describe('Regime Selector Component - getSelectedRegime', () => {
   beforeEach(setupRegimeSelectorDOM);
   afterEach(cleanupDOM);
 
-  it('should return "compare" as default selected regime', () => {
-    expect(getSelectedRegime()).toBe('compare');
+  // TAX-017: Default is now 'new'
+  it('should return "new" as default selected regime', () => {
+    expect(getSelectedRegime()).toBe('new');
   });
 
   it('should return "old" when old regime is selected', () => {
@@ -139,16 +137,16 @@ describe('Regime Selector Component - setSelectedRegime', () => {
   });
 
   it('should set new regime', () => {
+    setSelectedRegime('old'); // Change from default first
     const result = setSelectedRegime('new');
     expect(result).toBe(true);
     expect(getSelectedRegime()).toBe('new');
   });
 
-  it('should set compare regime', () => {
-    setSelectedRegime('old'); // Change from default first
+  // TAX-017: compare is no longer valid
+  it('should return false for compare regime (removed)', () => {
     const result = setSelectedRegime('compare');
-    expect(result).toBe(true);
-    expect(getSelectedRegime()).toBe('compare');
+    expect(result).toBe(false);
   });
 
   it('should return false for invalid regime', () => {
@@ -289,39 +287,35 @@ describe('Regime Selector Component - updateAvailableRegimes', () => {
   afterEach(cleanupDOM);
 
   it('should disable regimes not in available list', () => {
-    updateAvailableRegimes(['old', 'new']); // No compare
+    updateAvailableRegimes(['old']); // No new
 
-    const compareRadio = document.getElementById('regime-compare');
-    expect(compareRadio?.disabled).toBe(true);
+    const newRadio = document.getElementById('regime-new');
+    expect(newRadio?.disabled).toBe(true);
   });
 
   it('should enable regimes in available list', () => {
-    updateAvailableRegimes(['old', 'new', 'compare']);
+    updateAvailableRegimes(['old', 'new']);
 
     const oldRadio = document.getElementById('regime-old');
     const newRadio = document.getElementById('regime-new');
-    const compareRadio = document.getElementById('regime-compare');
 
     expect(oldRadio?.disabled).toBe(false);
     expect(newRadio?.disabled).toBe(false);
-    expect(compareRadio?.disabled).toBe(false);
   });
 
   it('should set opacity on unavailable regimes', () => {
     updateAvailableRegimes(['old']); // Only old
 
     const newOption = document.querySelector('label.regime-option:has(#regime-new)');
-    const compareOption = document.querySelector('label.regime-option:has(#regime-compare)');
 
     expect(newOption?.style.opacity).toBe('0.5');
-    expect(compareOption?.style.opacity).toBe('0.5');
   });
 
   it('should set aria-disabled on unavailable regimes', () => {
-    updateAvailableRegimes(['old', 'new']); // No compare
+    updateAvailableRegimes(['old']); // No new
 
-    const compareOption = document.querySelector('label.regime-option:has(#regime-compare)');
-    expect(compareOption?.getAttribute('aria-disabled')).toBe('true');
+    const newOption = document.querySelector('label.regime-option:has(#regime-new)');
+    expect(newOption?.getAttribute('aria-disabled')).toBe('true');
   });
 
   it('should not throw when DOM missing', () => {
@@ -340,17 +334,16 @@ describe('Regime Selector Component - resetRegimeSelector', () => {
     expect(getSelectedRegime()).toBe(DEFAULT_REGIME);
   });
 
+  // TAX-017: Only old and new options now
   it('should re-enable all options', () => {
     updateAvailableRegimes(['old']); // Disable some
     resetRegimeSelector();
 
     const oldRadio = document.getElementById('regime-old');
     const newRadio = document.getElementById('regime-new');
-    const compareRadio = document.getElementById('regime-compare');
 
     expect(oldRadio?.disabled).toBe(false);
     expect(newRadio?.disabled).toBe(false);
-    expect(compareRadio?.disabled).toBe(false);
   });
 });
 
@@ -403,9 +396,10 @@ describe('Regime Selector Component - Accessibility', () => {
     expect(options?.getAttribute('aria-label')).toBe('Tax regime selection');
   });
 
+  // TAX-017: Only 2 regime options now
   it('should have associated labels for all radios', () => {
     const labels = document.querySelectorAll('label.regime-option');
-    expect(labels.length).toBe(3);
+    expect(labels.length).toBe(2);
 
     labels.forEach(label => {
       const radio = label.querySelector('input[type="radio"]');
