@@ -89,21 +89,39 @@ export async function orchestrateCalculation(formInput) {
       business: normalizedInput.business,
       capitalGains: normalizedInput.capitalGains,
       otherIncome: normalizedInput.otherIncome,
+      
+      // TAX-010: Granular capital gains
+      stcgEquity: normalizedInput.stcgEquity,
+      stcgOther: normalizedInput.stcgOther,
+      ltcgEquity: normalizedInput.ltcgEquity,
+      ltcgOther: normalizedInput.ltcgOther,
+      
+      // TAX-010: Trading income
+      speculativeGains: normalizedInput.speculativeGains,
+      speculativeLosses: normalizedInput.speculativeLosses,
+      fnoGains: normalizedInput.fnoGains,
+      fnoLosses: normalizedInput.fnoLosses,
+      
+      // TAX-010: Expanded other income
+      interestIncome: normalizedInput.interestIncome,
+      dividendIncome: normalizedInput.dividendIncome,
+      otherTaxable: normalizedInput.otherTaxable,
     });
 
     // Step 5: Create deductions object (extract from form input)
     const deductions = createDeductions({
-      section80C: normalizedInput.section80C || 0,
-      section80CCD1B: normalizedInput.section80CCD1B || 0,
-      section80D: normalizedInput.section80D || 0,
-      section80E: normalizedInput.section80E || 0,
-      section80G: normalizedInput.section80G || 0,
-      section80TTA: normalizedInput.section80TTA || 0,
-      section80TTB: normalizedInput.section80TTB || 0,
-      hra: normalizedInput.hra || 0,
-      lta: normalizedInput.lta || 0,
-      homeLoanInterest: normalizedInput.homeLoanInterest || 0,
-      otherDeductions: normalizedInput.otherDeductions || 0,
+      standardDeduction: normalizedInput.deductions?.standardDeduction || 0,
+      section80C: normalizedInput.deductions?.section80C || 0,
+      section80CCD1B: normalizedInput.deductions?.section80CCD1B || 0,
+      section80D: normalizedInput.deductions?.section80D || 0,
+      section80E: normalizedInput.deductions?.section80E || 0,
+      section80G: normalizedInput.deductions?.section80G || 0,
+      section80TTA: normalizedInput.deductions?.section80TTA || 0,
+      section80TTB: normalizedInput.deductions?.section80TTB || 0,
+      hra: normalizedInput.deductions?.hra || 0,
+      lta: normalizedInput.deductions?.lta || 0,
+      homeLoanInterest: normalizedInput.deductions?.homeLoanInterest || 0,
+      otherDeductions: normalizedInput.deductions?.otherDeductions || 0,
     });
 
     // Step 6: Get rules for the financial year
