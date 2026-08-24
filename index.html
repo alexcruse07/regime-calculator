@@ -23,31 +23,30 @@
     </header>
 
     <main class="main-content">
-      <!-- Controls Section -->
-      <section class="controls-section">
-        <div class="control-group">
-          <label class="control-label" for="financial-year">Financial Year</label>
-          <select id="financial-year" name="financial-year" class="form-select" required>
-            <option value="2025-26" selected>2025-26</option>
-            <option value="2026-27">2026-27</option>
-          </select>
-        </div>
-        <div class="control-group" id="regime-selection-group">
-          <span class="control-label">Tax Regime</span>
-          <div class="radio-group">
-            <label class="radio-label">
-              <input type="radio" name="tax-regime" value="old" id="regime-old">
-              <span>Old Regime</span>
-            </label>
-            <label class="radio-label">
-              <input type="radio" name="tax-regime" value="new" id="regime-new" checked>
-              <span>New Regime</span>
-            </label>
-          </div>
-        </div>
-      </section>
-
       <form id="tax-form" class="tax-form">
+        <!-- Controls Section -->
+        <section class="controls-section">
+          <div class="control-group">
+            <label class="control-label" for="financial-year">Financial Year</label>
+            <select id="financial-year" name="financial-year" class="form-select" required>
+              <option value="2025-26" selected>2025-26</option>
+              <option value="2026-27">2026-27</option>
+            </select>
+          </div>
+          <div class="control-group" id="regime-selection-group">
+            <span class="control-label">Tax Regime</span>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="tax-regime" value="old" id="regime-old">
+                <span>Old Regime</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="tax-regime" value="new" id="regime-new" checked>
+                <span>New Regime</span>
+              </label>
+            </div>
+          </div>
+        </section>
         <!-- Dual Panel Layout -->
         <div class="dual-panel">
           <!-- Income Panel -->
