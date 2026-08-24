@@ -1,79 +1,223 @@
 /**
  * Tax Calculation Engine
  * Core tax calculation logic that uses rules to compute tax liability
+ *
+ * TAX-012: Enhanced calculation engine supporting:
+ * - All income types (salary, house property, business, capital gains, other)
+ * - All deductions (80C, 80D, etc.)
+ * - Section 87A rebate
+ * - Surcharge with marginal relief
+ * - Health & Education Cess
+ * - Detailed breakdown
  */
 
-import { createCalculationResult, createComparisonResult } from '../types/calculation-result.js';
-import { calculateGrossIncome, isValidIncome } from '../types/income.js';
+import { createComparisonResult, createDetailedResult } from '../types/calculation-result.js';
 import {
   calculateIncomeTax,
   calculateSurcharge,
   calculateCess,
+  calculateRebate87A,
 } from '../../rules/financial-years/fy-2024-25.js';
+import { getStandardDeductionAmount, applyAllDeductionCaps } from '../../rules/deduction-limits.js';
 
 /**
- * Calculates tax for a given income and regime
- * @param {Object} income - Income object with salary and otherIncome
- * @param {Object} rules - Tax rules object with slabs, surcharge, etc.
- * @returns {Object} Calculation result with all tax components
- * @throws {Error} If inputs are invalid
+ * Calculates gross total income from all sources
+ * @param {Object} income - Income object with all income types
+ * @returns {number} Gross total income
  */
-export function calculateTax(income, rules) {
-  if (!isValidIncome(income)) {
-    throw new Error('Invalid income object');
+export function calculateGrossIncome(income) {
+  if (!income || typeof income !== 'object') {
+    return 0;
   }
 
-  if (!rules || typeof rules !== 'object') {
-    throw new Error('Invalid tax rules object');
-  }
+  const salary = parseFloat(income.salary) || 0;
+  const houseProperty = parseFloat(income.houseProperty) || 0;
+  const business = parseFloat(income.business) || 0;
+  const stcgEquity = parseFloat(income.stcgEquity) || 0;
+  const stcgOther = parseFloat(income.stcgOther) || 0;
+  const ltcgEquity = parseFloat(income.ltcgEquity) || 0;
+  const ltcgOther = parseFloat(income.ltcgOther) || 0;
+  const speculativeGains = parseFloat(income.speculativeGains) || 0;
+  const speculativeLosses = parseFloat(income.speculativeLosses) || 0;
+  const fnoGains = parseFloat(income.fnoGains) || 0;
+  const fnoLosses = parseFloat(income.fnoLosses) || 0;
+  const interestIncome = parseFloat(income.interestIncome) || 0;
+  const dividendIncome = parseFloat(income.dividendIncome) || 0;
+  const otherTaxable = parseFloat(income.otherTaxable) || 0;
+  // Legacy support
+  const capitalGains = parseFloat(income.capitalGains) || 0;
+  const otherIncome = parseFloat(income.otherIncome) || 0;
 
-  // Calculate gross income
-  const grossIncome = calculateGrossIncome(income);
+  // Net speculative income (can't set off speculative loss against other income)
+  const netSpeculative = Math.max(0, speculativeGains - speculativeLosses);
+  // F&O is business income - can set off loss against other business income
+  const netFnO = fnoGains - fnoLosses;
 
-  // Apply standard deduction
-  const standardDeduction = rules.standardDeduction || 0;
-  const taxableIncome = Math.max(0, grossIncome - standardDeduction);
-
-  // Calculate income tax using applicable slabs
-  const incomeTax = calculateIncomeTax(taxableIncome, rules.taxSlabs);
-
-  // Calculate surcharge based on gross income
-  const surcharge = calculateSurcharge(grossIncome, incomeTax, rules.surcharge);
-
-  // Calculate cess on income tax + surcharge
-  const taxBeforeCess = incomeTax + surcharge;
-  const cess = calculateCess(taxBeforeCess, rules.cess.rate);
-
-  // Create and return result
-  return createCalculationResult(
-    grossIncome,
-    taxableIncome,
-    incomeTax,
-    surcharge,
-    cess,
-    rules.regime,
-    rules.financialYear,
+  // Gross total income
+  return Math.max(0,
+    salary +
+    houseProperty +  // Can be negative for loss
+    business +
+    netFnO +
+    stcgEquity +
+    stcgOther +
+    ltcgEquity +
+    ltcgOther +
+    netSpeculative +
+    interestIncome +
+    dividendIncome +
+    otherTaxable +
+    capitalGains +
+    otherIncome,
   );
 }
 
 /**
- * Compares tax liability between old and new regime
- * @param {Object} income - Income object with salary and otherIncome
- * @param {Object} oldRegimeRules - Tax rules for old regime
- * @param {Object} newRegimeRules - Tax rules for new regime
- * @returns {Object} Comparison result showing tax in both regimes
- * @throws {Error} If inputs are invalid
+ * Calculates total deductions applicable based on regime
+ * @param {Object} deductions - Deductions object
+ * @param {string} regime - 'old' or 'new'
+ * @param {string} financialYear - Financial year
+ * @param {number} salary - Salary income (for standard deduction)
+ * @returns {Object} Deduction breakdown
  */
-export function compareRegimes(income, oldRegimeRules, newRegimeRules) {
-  if (!isValidIncome(income)) {
-    throw new Error('Invalid income object');
+export function calculateDeductions(deductions, regime, financialYear, salary) {
+  const cappedDeductions = applyAllDeductionCaps(deductions || {}, financialYear);
+
+  // Standard deduction applies only if there's salary income
+  const standardDeduction = salary > 0 ? getStandardDeductionAmount(regime, financialYear) : 0;
+
+  if (regime === 'new') {
+    // New regime: Only standard deduction allowed
+    return {
+      standardDeduction,
+      section80C: 0,
+      section80CCD1B: 0,
+      section80D: 0,
+      section80E: 0,
+      section80G: 0,
+      section80TTA: 0,
+      section80TTB: 0,
+      hra: 0,
+      lta: 0,
+      homeLoanInterest: 0,
+      otherDeductions: 0,
+      totalDeductions: standardDeduction,
+    };
   }
 
-  // Calculate for both regimes
-  const oldResult = calculateTax(income, oldRegimeRules);
-  const newResult = calculateTax(income, newRegimeRules);
+  // Old regime: All deductions allowed
+  const totalChapterVIA =
+    (cappedDeductions.section80C || 0) +
+    (cappedDeductions.section80CCD1B || 0) +
+    (cappedDeductions.section80D || 0) +
+    (cappedDeductions.section80E || 0) +
+    (cappedDeductions.section80G || 0) +
+    (cappedDeductions.section80TTA || 0) +
+    (cappedDeductions.section80TTB || 0);
 
-  // Create comparison
+  const totalExemptions =
+    (cappedDeductions.hra || 0) +
+    (cappedDeductions.lta || 0);
+
+  const homeLoanInterest = cappedDeductions.homeLoanInterest || 0;
+  const otherDeductions = cappedDeductions.otherDeductions || 0;
+
+  const totalDeductions = standardDeduction + totalChapterVIA + totalExemptions + homeLoanInterest + otherDeductions;
+
+  return {
+    standardDeduction,
+    section80C: cappedDeductions.section80C || 0,
+    section80CCD1B: cappedDeductions.section80CCD1B || 0,
+    section80D: cappedDeductions.section80D || 0,
+    section80E: cappedDeductions.section80E || 0,
+    section80G: cappedDeductions.section80G || 0,
+    section80TTA: cappedDeductions.section80TTA || 0,
+    section80TTB: cappedDeductions.section80TTB || 0,
+    hra: cappedDeductions.hra || 0,
+    lta: cappedDeductions.lta || 0,
+    homeLoanInterest,
+    otherDeductions,
+    totalChapterVIA,
+    totalExemptions,
+    totalDeductions,
+  };
+}
+
+/**
+ * Calculates tax for a given income and regime with full breakdown
+ * @param {Object} income - Income object with all income types
+ * @param {Object} deductions - Deductions object
+ * @param {Object} rules - Tax rules object with slabs, surcharge, etc.
+ * @returns {Object} Detailed calculation result with all tax components
+ * @throws {Error} If inputs are invalid
+ */
+export function calculateTax(income, deductions, rules) {
+  if (!rules || typeof rules !== 'object') {
+    throw new Error('Invalid tax rules object');
+  }
+
+  const regime = rules.regime;
+  const financialYear = rules.financialYear;
+  const salary = parseFloat(income?.salary) || 0;
+
+  // Step 1: Calculate gross total income
+  const grossIncome = calculateGrossIncome(income);
+
+  // Step 2: Calculate deductions
+  const deductionBreakdown = calculateDeductions(deductions, regime, financialYear, salary);
+  const totalDeductions = deductionBreakdown.totalDeductions;
+
+  // Step 3: Calculate taxable income
+  const taxableIncome = Math.max(0, grossIncome - totalDeductions);
+
+  // Step 4: Calculate income tax using slabs
+  const incomeTax = calculateIncomeTax(taxableIncome, rules.taxSlabs);
+
+  // Step 5: Apply Section 87A rebate
+  const rebate = calculateRebate87A(taxableIncome, incomeTax, rules.rebates);
+  const taxAfterRebate = Math.max(0, incomeTax - rebate);
+
+  // Step 6: Calculate surcharge
+  const surcharge = calculateSurcharge(grossIncome, taxAfterRebate, rules.surcharge);
+
+  // Step 7: Calculate Health & Education Cess
+  const taxBeforeCess = taxAfterRebate + surcharge;
+  const cess = calculateCess(taxBeforeCess, rules.cess.rate);
+
+  // Step 8: Total tax payable
+  const totalTax = taxAfterRebate + surcharge + cess;
+
+  // Create detailed result
+  return createDetailedResult({
+    grossIncome,
+    totalDeductions,
+    deductionBreakdown,
+    taxableIncome,
+    incomeTax,
+    rebate,
+    taxAfterRebate,
+    surcharge,
+    cess,
+    totalTax,
+    regime,
+    financialYear,
+  });
+}
+
+/**
+ * Compares tax liability between old and new regime
+ * @param {Object} income - Income object with all income types
+ * @param {Object} deductions - Deductions object
+ * @param {Object} oldRules - Tax rules for old regime
+ * @param {Object} newRules - Tax rules for new regime
+ * @returns {Object} Comparison result showing tax in both regimes
+ */
+export function compareRegimes(income, deductions, oldRules, newRules) {
+  // Calculate for both regimes with deductions
+  const oldResult = calculateTax(income, deductions, oldRules);
+  const newResult = calculateTax(income, deductions, newRules);
+
+  // Create enhanced comparison
   return createComparisonResult(oldResult, newResult);
 }
 

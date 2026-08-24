@@ -114,8 +114,10 @@ describe('Tax Calculation Integration Flow', () => {
       expect(result.success).toBe(true);
 
       const calculation = result.result;
-      expect(calculation.oldRegime.taxableIncome).toBe(500000);
-      expect(calculation.newRegime.taxableIncome).toBeLessThan(500000); // Standard deduction applied
+      // Old regime: ₹5L - ₹50K standard deduction = ₹4.5L taxable
+      expect(calculation.oldRegime.taxableIncome).toBe(450000);
+      // New regime: ₹5L - ₹75K standard deduction = ₹4.25L taxable
+      expect(calculation.newRegime.taxableIncome).toBe(425000);
     });
   });
 
@@ -218,18 +220,18 @@ describe('Tax Calculation Integration Flow', () => {
 
       const calculation = result.result;
 
-      // Verify total tax is sum of components
-      const expectedOldTotal =
-        calculation.oldRegime.incomeTax +
-        calculation.oldRegime.surcharge +
-        calculation.oldRegime.cess;
-      const expectedNewTotal =
-        calculation.newRegime.incomeTax +
-        calculation.newRegime.surcharge +
-        calculation.newRegime.cess;
+      // Total tax = taxAfterRebate + surcharge + cess
+      // For income at/below rebate threshold, total tax should be 0
+      const oldTaxableIncome = calculation.oldRegime.taxableIncome;
+      const newTaxableIncome = calculation.newRegime.taxableIncome;
 
-      expect(calculation.oldRegime.totalTax).toBeCloseTo(expectedOldTotal, 0);
-      expect(calculation.newRegime.totalTax).toBeCloseTo(expectedNewTotal, 0);
+      // Old regime: 550K - 50K std = 500K taxable (within 5L rebate threshold)
+      expect(oldTaxableIncome).toBe(500000);
+      expect(calculation.oldRegime.totalTax).toBe(0); // Full rebate applied
+
+      // New regime: 550K - 75K std = 475K taxable (within 7L rebate threshold)
+      expect(newTaxableIncome).toBe(475000);
+      expect(calculation.newRegime.totalTax).toBe(0); // Full rebate applied
     });
   });
 

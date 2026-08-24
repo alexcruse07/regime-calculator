@@ -119,6 +119,7 @@ export function updateCalculationResults(state) {
 
 /**
  * Updates a regime column display
+ * TAX-013: Enhanced to show detailed breakdown including deductions and rebate
  * @param {string} regime - 'old' or 'new'
  * @param {Object} result - Calculation result object
  */
@@ -127,8 +128,10 @@ function updateRegimeDisplay(regime, result) {
 
   const elements = {
     grossIncome: document.getElementById(`${prefix}-gross-income`),
+    totalDeductions: document.getElementById(`${prefix}-total-deductions`),
     taxableIncome: document.getElementById(`${prefix}-taxable-income`),
     incomeTax: document.getElementById(`${prefix}-income-tax`),
+    rebate: document.getElementById(`${prefix}-rebate`),
     surcharge: document.getElementById(`${prefix}-surcharge`),
     cess: document.getElementById(`${prefix}-cess`),
     totalTax: document.getElementById(`${prefix}-total-tax`),
@@ -138,12 +141,23 @@ function updateRegimeDisplay(regime, result) {
     elements.grossIncome.textContent = formatIndianCurrency(result.grossIncome);
   }
 
+  if (elements.totalDeductions) {
+    elements.totalDeductions.textContent = formatIndianCurrency(result.totalDeductions || 0);
+  }
+
   if (elements.taxableIncome) {
     elements.taxableIncome.textContent = formatIndianCurrency(result.taxableIncome);
   }
 
   if (elements.incomeTax) {
     elements.incomeTax.textContent = formatIndianCurrency(result.incomeTax);
+  }
+
+  if (elements.rebate) {
+    const rebateValue = result.rebate || 0;
+    elements.rebate.textContent = rebateValue > 0
+      ? `- ${formatIndianCurrency(rebateValue)}`
+      : formatIndianCurrency(0);
   }
 
   if (elements.surcharge) {

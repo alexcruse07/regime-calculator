@@ -40,14 +40,16 @@ export const oldRegimeRules = {
   // Rebates under Section 87A (for individuals with taxable income up to ₹5 lakh)
   rebates: [
     {
-      condition: 'taxableIncome <= 250000',
-      rebateAmount: 0,
-      description: 'No tax for income up to ₹2.5 lakh',
-    },
-    {
-      condition: 'taxableIncome <= 500000',
+      minIncome: 0,
+      maxIncome: 500000,
       rebateAmount: 'fullTax',
       description: 'Full tax relief for income up to ₹5 lakh under Section 87A',
+    },
+    {
+      minIncome: 500001,
+      maxIncome: Infinity,
+      rebateAmount: 0,
+      description: 'No rebate for income above ₹5 lakh',
     },
   ],
 
@@ -93,14 +95,16 @@ export const newRegimeRules = {
   // Rebates under Section 87A
   rebates: [
     {
-      condition: 'taxableIncome <= 300000',
-      rebateAmount: 0,
-      description: 'No tax for income up to ₹3 lakh',
-    },
-    {
-      condition: 'taxableIncome <= 700000',
+      minIncome: 0,
+      maxIncome: 700000,
       rebateAmount: 'fullTax',
       description: 'Full tax relief for income up to ₹7 lakh under Section 87A',
+    },
+    {
+      minIncome: 700001,
+      maxIncome: Infinity,
+      rebateAmount: 0,
+      description: 'No rebate for income above ₹7 lakh',
     },
   ],
 
@@ -213,4 +217,37 @@ export function calculateCess(incomeTax, cessRate = 4) {
   }
 
   return (incomeTax * cessRate) / 100;
+}
+
+/**
+ * Calculates Section 87A rebate
+ * @param {number} taxableIncome - Taxable income after deductions
+ * @param {number} incomeTax - Calculated income tax before rebate
+ * @param {Array} rebates - Rebate rules array
+ * @returns {number} Rebate amount
+ */
+export function calculateRebate87A(taxableIncome, incomeTax, rebates) {
+  if (!Number.isFinite(taxableIncome) || taxableIncome < 0) {
+    throw new Error('Taxable income must be a non-negative finite number');
+  }
+
+  if (!Number.isFinite(incomeTax) || incomeTax < 0) {
+    throw new Error('Income tax must be a non-negative finite number');
+  }
+
+  if (!Array.isArray(rebates)) {
+    return 0;
+  }
+
+  // Find applicable rebate rule based on taxable income
+  for (const rebate of rebates) {
+    if (taxableIncome >= rebate.minIncome && taxableIncome <= rebate.maxIncome) {
+      if (rebate.rebateAmount === 'fullTax') {
+        return incomeTax; // Full rebate - tax becomes zero
+      }
+      return Math.min(rebate.rebateAmount || 0, incomeTax);
+    }
+  }
+
+  return 0; // No rebate applicable
 }

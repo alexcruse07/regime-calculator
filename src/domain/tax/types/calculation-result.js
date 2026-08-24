@@ -172,3 +172,91 @@ export function isValidComparisonResult(value) {
     Number.isFinite(value.savingsPercentage)
   );
 }
+
+/**
+ * @typedef {Object} DetailedTaxResult
+ * Extended tax calculation result with full breakdown
+ *
+ * @property {number} grossIncome - Total gross income
+ * @property {number} totalDeductions - Total deductions applied
+ * @property {Object} deductionBreakdown - Breakdown of each deduction type
+ * @property {number} taxableIncome - Taxable income after deductions
+ * @property {number} incomeTax - Income tax calculated on slabs
+ * @property {number} rebate - Rebate under Section 87A
+ * @property {number} taxAfterRebate - Tax after rebate
+ * @property {number} surcharge - Surcharge applicable
+ * @property {number} cess - Health and Education Cess
+ * @property {number} totalTax - Total tax payable
+ * @property {string} regime - Tax regime used ('old' or 'new')
+ * @property {string} financialYear - Financial year
+ */
+
+/**
+ * Creates a detailed tax calculation result with full breakdown
+ * @param {Object} params - Calculation parameters
+ * @returns {DetailedTaxResult} Detailed result object
+ */
+export function createDetailedResult({
+  grossIncome,
+  totalDeductions,
+  deductionBreakdown,
+  taxableIncome,
+  incomeTax,
+  rebate,
+  taxAfterRebate,
+  surcharge,
+  cess,
+  totalTax,
+  regime,
+  financialYear,
+}) {
+  // Validate numeric values
+  const numericValues = [
+    grossIncome, totalDeductions, taxableIncome, incomeTax,
+    rebate, taxAfterRebate, surcharge, cess, totalTax,
+  ];
+
+  if (!numericValues.every(v => Number.isFinite(v) && v >= 0)) {
+    throw new Error('All tax amounts must be non-negative finite numbers');
+  }
+
+  if (!['old', 'new'].includes(regime)) {
+    throw new Error('Regime must be "old" or "new"');
+  }
+
+  return {
+    grossIncome,
+    totalDeductions,
+    deductionBreakdown: deductionBreakdown || {},
+    taxableIncome,
+    incomeTax,
+    rebate,
+    taxAfterRebate,
+    surcharge,
+    cess,
+    totalTax,
+    regime,
+    financialYear,
+  };
+}
+
+/**
+ * Validates a detailed result object
+ * @param {*} value - Value to validate
+ * @returns {boolean} True if value is a valid DetailedTaxResult
+ */
+export function isValidDetailedResult(value) {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    Number.isFinite(value.grossIncome) &&
+    Number.isFinite(value.totalDeductions) &&
+    Number.isFinite(value.taxableIncome) &&
+    Number.isFinite(value.incomeTax) &&
+    Number.isFinite(value.rebate) &&
+    Number.isFinite(value.surcharge) &&
+    Number.isFinite(value.cess) &&
+    Number.isFinite(value.totalTax) &&
+    ['old', 'new'].includes(value.regime)
+  );
+}

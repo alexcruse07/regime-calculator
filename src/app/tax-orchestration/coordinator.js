@@ -9,6 +9,8 @@
  * - business: Business/professional income (TAX-006)
  * - capitalGains: Capital gains (TAX-007)
  * - otherIncome: Other income (TAX-008)
+ *
+ * TAX-012: Enhanced calculation with deductions support
  */
 
 import { appState } from '../state/appState.js';
@@ -17,6 +19,7 @@ import { cleanInputForCalculation } from '../input-normalization/normalizers.js'
 import { compareRegimes } from '../../domain/tax/calculations/calculation-engine.js';
 import { getRegimeRulesForYear } from '../../domain/rules/financial-years/index.js';
 import { createIncome } from '../../domain/tax/types/income.js';
+import { createDeductions } from '../../domain/tax/types/deductions.js';
 
 /**
  * Orchestrates the complete tax calculation workflow
@@ -88,17 +91,33 @@ export async function orchestrateCalculation(formInput) {
       otherIncome: normalizedInput.otherIncome,
     });
 
-    // Step 5: Get rules for the financial year
+    // Step 5: Create deductions object (extract from form input)
+    const deductions = createDeductions({
+      section80C: normalizedInput.section80C || 0,
+      section80CCD1B: normalizedInput.section80CCD1B || 0,
+      section80D: normalizedInput.section80D || 0,
+      section80E: normalizedInput.section80E || 0,
+      section80G: normalizedInput.section80G || 0,
+      section80TTA: normalizedInput.section80TTA || 0,
+      section80TTB: normalizedInput.section80TTB || 0,
+      hra: normalizedInput.hra || 0,
+      lta: normalizedInput.lta || 0,
+      homeLoanInterest: normalizedInput.homeLoanInterest || 0,
+      otherDeductions: normalizedInput.otherDeductions || 0,
+    });
+
+    // Step 6: Get rules for the financial year
     const rules = getRegimeRulesForYear(normalizedInput.financialYear);
 
-    // Step 6: Calculate tax for both regimes
+    // Step 7: Calculate tax for both regimes with deductions
     const calculationResult = compareRegimes(
       income,
+      deductions,
       rules.oldRegime,
       rules.newRegime,
     );
 
-    // Step 7: Update app state with results
+    // Step 8: Update app state with results
     appState.setCalculations(calculationResult);
     appState.setIsCalculating(false);
 
