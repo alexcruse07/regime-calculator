@@ -29,6 +29,14 @@ export async function handleFormSubmit(event) {
 
   const form = event.target;
 
+  // Debug: Log form and financial year field
+  console.log('📋 Form submit triggered');
+  console.log('Form element:', form);
+  console.log('Form.elements keys:', Object.keys(form.elements));
+  const fyField = form.elements['financial-year'];
+  console.log('Financial Year field:', fyField);
+  console.log('Financial Year value:', fyField?.value);
+
   // Collect form data including all income types, deductions, and regime
   const formData = {
     // Basic income (TAX-004 to TAX-008)
@@ -71,7 +79,7 @@ export async function handleFormSubmit(event) {
       otherDeductions: form.elements['other-deductions']?.value || '',
     },
 
-    financialYear: form.elements['financial-year']?.value || '',
+    financialYear: form.elements['financial-year']?.value || document.getElementById('financial-year')?.value || '',
     taxRegime: getSelectedRegime() || DEFAULT_REGIME,  // TAX-009: Include regime
   };
 
