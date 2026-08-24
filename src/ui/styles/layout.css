@@ -224,36 +224,35 @@
   color: var(--primary);
 }
 
-/* Why Use Section - Minimal */
+/* Why Use Section - Inline Strip */
 .why-use-section {
   background: var(--surface);
-  padding: 1rem 2rem;
-  text-align: center;
+  padding: 0.6rem 1rem;
   border-top: 1px solid var(--gray-200);
 }
 
 .why-use-section h2 {
-  font-size: 0.95rem;
-  color: var(--gray-600);
-  margin-bottom: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  margin-bottom: 0.5rem;
+  text-align: center;
 }
 
 .features-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.75rem;
-  max-width: 900px;
-  margin: 0 auto;
+  gap: 0.5rem;
 }
 
 .feature-card {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   background: var(--gray-50);
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-sm);
-  padding: 0.5rem 0.75rem;
-  min-width: 130px;
-  text-align: center;
+  padding: 0.3rem 0.6rem;
 }
 
 .feature-card:hover {
@@ -261,52 +260,30 @@
 }
 
 .feature-icon-box {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   border-radius: var(--radius-full);
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.7rem;
-  margin-bottom: 0.25rem;
+  font-size: 0.6rem;
 }
 
-.feature-icon-box.blue {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--primary);
-}
-
-.feature-icon-box.yellow {
-  background: rgba(245, 158, 11, 0.1);
-  color: var(--accent-yellow);
-}
-
-.feature-icon-box.green {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--secondary);
-}
-
-.feature-icon-box.purple {
-  background: rgba(139, 92, 246, 0.1);
-  color: var(--accent-purple);
-}
-
-.feature-icon-box.teal {
-  background: rgba(20, 184, 166, 0.1);
-  color: var(--accent-teal);
-}
+.feature-icon-box.blue { background: rgba(59, 130, 246, 0.1); color: var(--primary); }
+.feature-icon-box.yellow { background: rgba(245, 158, 11, 0.1); color: var(--accent-yellow); }
+.feature-icon-box.green { background: rgba(16, 185, 129, 0.1); color: var(--secondary); }
+.feature-icon-box.purple { background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); }
+.feature-icon-box.teal { background: rgba(20, 184, 166, 0.1); color: var(--accent-teal); }
 
 .feature-card h3 {
-  font-size: 0.7rem;
-  color: var(--gray-700);
-  margin-bottom: 0.1rem;
+  font-size: 0.65rem;
+  color: var(--gray-600);
+  margin: 0;
+  font-weight: 500;
 }
 
 .feature-card p {
-  font-size: 0.6rem;
-  color: var(--gray-500);
-  margin: 0;
-  line-height: 1.2;
+  display: none;
 }
 
 /* Footer - Minimal */
