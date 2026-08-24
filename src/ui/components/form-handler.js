@@ -199,24 +199,16 @@ export async function handleFormSubmit(event) {
 
 /**
  * Handles form reset
+ * Refreshes the page to clear all state
  * @param {Event} event - Form reset event
  * @returns {void}
  */
 export function handleFormReset(event) {
   event.preventDefault();
-
-  // Reset application state
-  resetCalculation();
-
-  // Reset form elements
-  const form = event.target;
-  form.reset();
-
-  // Reset controls outside the form
-  const fySelect = document.getElementById('financial-year');
-  if (fySelect) {
-    fySelect.value = '2025-26';
-  }
+  
+  // Refresh the page to clear all state
+  window.location.reload();
+}
 
   // Reset tax regime to new (default)
   const regimeNew = document.getElementById('regime-new');

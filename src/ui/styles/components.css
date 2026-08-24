@@ -67,19 +67,31 @@
   left: 0.75rem;
   color: var(--gray-400);
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   pointer-events: none;
+  z-index: 1;
 }
 
 .form-input {
   width: 100%;
   padding: 0.625rem 0.75rem;
-  padding-left: 2rem;
+  padding-left: 2.5rem;
   font-size: 0.95rem;
   border: 2px solid var(--gray-200);
   border-radius: var(--radius-md);
   background: var(--surface);
   transition: all var(--transition-fast);
+}
+
+/* Hide number input spinner buttons */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 .form-input:focus {
@@ -270,25 +282,20 @@ details[open] summary::before {
   border-radius: var(--radius-lg);
   margin-bottom: 1.5rem;
   border: 1px solid var(--primary-100);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
 }
 
 .user-info-section .form-group {
-  display: inline-block;
-  width: calc(50% - 0.5rem);
-  margin-right: 1rem;
-  margin-bottom: 1rem;
-}
-
-.user-info-section .form-group:nth-child(even) {
-  margin-right: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
 }
 
 @media (max-width: 768px) {
-  .user-info-section .form-group {
-    display: block;
-    width: 100%;
-    margin-right: 0;
-    margin-bottom: 1rem;
+  .user-info-section {
+    grid-template-columns: 1fr;
   }
 }
 

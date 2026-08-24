@@ -245,6 +245,171 @@ function exportToText(state, fullName, financialYear) {
 }
 
 /**
+ * Generates HTML for PDF report
+ * @param {Object} state - Application state
+ * @param {string} fullName - User's full name
+ * @param {string} financialYear - Financial year
+ * @returns {string} HTML content for PDF
+ */
+function generatePDFHTML(state, fullName, financialYear) {
+  const formData = state.formData || {};
+  const oldResult = state.oldRegimeResult || {};
+  const newResult = state.newRegimeResult || {};
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Tax Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 20px; }
+    .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+    .header h1 { margin: 0; color: #1a5f7a; }
+    .header p { margin: 5px 0; color: #666; }
+    .section { margin: 20px 0; page-break-inside: avoid; }
+    .section-title { font-size: 14px; font-weight: bold; background: #f0f0f0; padding: 8px; margin-bottom: 10px; border-left: 4px solid #1a5f7a; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+    th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background: #f9f9f9; font-weight: bold; }
+    .label { width: 40%; font-weight: 500; }
+    .value { width: 60%; text-align: right; }
+    .highlight { background: #ffffcc; }
+    .comparison { background: #e8f4f8; padding: 10px; border-radius: 4px; }
+    .footer { margin-top: 30px; padding-top: 10px; border-top: 1px solid #ddd; font-size: 12px; color: #999; }
+    @media print { body { margin: 0; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🧮 Indian Income Tax Calculator Report</h1>
+    <p>Financial Year: ${financialYear}</p>
+    <p>Generated on: ${formatDate()}</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">User Information</div>
+    <table>
+      <tr><td class="label">Name:</td><td>${fullName || 'N/A'}</td></tr>
+      <tr><td class="label">PAN:</td><td>${formData.pan || 'Not provided'}</td></tr>
+      <tr><td class="label">Financial Year:</td><td>${financialYear}</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Income Details</div>
+    <table>
+      <tr><td class="label">Salary Income:</td><td>${formatCurrency(formData.salary)}</td></tr>
+      <tr><td class="label">House Property:</td><td>${formatCurrency(formData.houseProperty)}</td></tr>
+      <tr><td class="label">Business/Professional:</td><td>${formatCurrency(formData.business)}</td></tr>
+      ${formData.stcgEquity ? `<tr><td class="label">STCG Equity:</td><td>${formatCurrency(formData.stcgEquity)}</td></tr>` : ''}
+      ${formData.ltcgEquity ? `<tr><td class="label">LTCG Equity:</td><td>${formatCurrency(formData.ltcgEquity)}</td></tr>` : ''}
+      ${formData.ltcgOther ? `<tr><td class="label">LTCG Real Estate:</td><td>${formatCurrency(formData.ltcgOther)}</td></tr>` : ''}
+      ${formData.speculativeGains ? `<tr><td class="label">Speculative Gains:</td><td>${formatCurrency(formData.speculativeGains)}</td></tr>` : ''}
+      ${formData.fnoGains ? `<tr><td class="label">F&O Gains:</td><td>${formatCurrency(formData.fnoGains)}</td></tr>` : ''}
+      ${formData.interestIncome ? `<tr><td class="label">Interest Income:</td><td>${formatCurrency(formData.interestIncome)}</td></tr>` : ''}
+      ${formData.dividendIncome ? `<tr><td class="label">Dividend Income:</td><td>${formatCurrency(formData.dividendIncome)}</td></tr>` : ''}
+      ${formData.otherTaxable ? `<tr><td class="label">Other Taxable Income:</td><td>${formatCurrency(formData.otherTaxable)}</td></tr>` : ''}
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Deductions</div>
+    <table>
+      ${formData.deductions ? `
+        ${formData.deductions.standardDeduction ? `<tr><td class="label">Standard Deduction:</td><td>${formatCurrency(formData.deductions.standardDeduction)}</td></tr>` : ''}
+        ${formData.deductions.section80C ? `<tr><td class="label">Section 80C:</td><td>${formatCurrency(formData.deductions.section80C)}</td></tr>` : ''}
+        ${formData.deductions.section80CCD1B ? `<tr><td class="label">Section 80CCD(1B):</td><td>${formatCurrency(formData.deductions.section80CCD1B)}</td></tr>` : ''}
+        ${formData.deductions.section80D ? `<tr><td class="label">Section 80D:</td><td>${formatCurrency(formData.deductions.section80D)}</td></tr>` : ''}
+        ${formData.deductions.hra ? `<tr><td class="label">HRA:</td><td>${formatCurrency(formData.deductions.hra)}</td></tr>` : ''}
+      ` : '<tr><td colspan="2">No deductions claimed</td></tr>'}
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Tax Calculation - OLD REGIME</div>
+    <table>
+      <tr><td class="label">Gross Income:</td><td>${formatCurrency(oldResult.grossIncome)}</td></tr>
+      <tr><td class="label">Total Deductions:</td><td>${formatCurrency(oldResult.totalDeductions)}</td></tr>
+      <tr><td class="label">Taxable Income:</td><td>${formatCurrency(oldResult.taxableIncome)}</td></tr>
+      <tr class="highlight"><td class="label">Income Tax:</td><td>${formatCurrency(oldResult.incomeTax)}</td></tr>
+      <tr><td class="label">Rebate (87A):</td><td>${formatCurrency(oldResult.rebate)}</td></tr>
+      <tr><td class="label">Surcharge:</td><td>${formatCurrency(oldResult.surcharge)}</td></tr>
+      <tr><td class="label">Cess (4%):</td><td>${formatCurrency(oldResult.cess)}</td></tr>
+      <tr class="highlight"><td class="label"><strong>TOTAL TAX</strong>:</td><td><strong>${formatCurrency(oldResult.totalTax)}</strong></td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Tax Calculation - NEW REGIME</div>
+    <table>
+      <tr><td class="label">Gross Income:</td><td>${formatCurrency(newResult.grossIncome)}</td></tr>
+      <tr><td class="label">Total Deductions:</td><td>${formatCurrency(newResult.totalDeductions)}</td></tr>
+      <tr><td class="label">Taxable Income:</td><td>${formatCurrency(newResult.taxableIncome)}</td></tr>
+      <tr class="highlight"><td class="label">Income Tax:</td><td>${formatCurrency(newResult.incomeTax)}</td></tr>
+      <tr><td class="label">Rebate (87A):</td><td>${formatCurrency(newResult.rebate)}</td></tr>
+      <tr><td class="label">Surcharge:</td><td>${formatCurrency(newResult.surcharge)}</td></tr>
+      <tr><td class="label">Cess (4%):</td><td>${formatCurrency(newResult.cess)}</td></tr>
+      <tr class="highlight"><td class="label"><strong>TOTAL TAX</strong>:</td><td><strong>${formatCurrency(newResult.totalTax)}</strong></td></tr>
+    </table>
+  </div>
+
+  <div class="section comparison">
+    <div class="section-title">Comparison & Recommendation</div>
+    <table>
+      <tr><td class="label">Old Regime Tax:</td><td>${formatCurrency(oldResult.totalTax)}</td></tr>
+      <tr><td class="label">New Regime Tax:</td><td>${formatCurrency(newResult.totalTax)}</td></tr>
+      <tr class="highlight"><td class="label"><strong>Tax Difference:</strong></td><td><strong>${formatCurrency(Math.abs(oldResult.totalTax - newResult.totalTax))}</strong></td></tr>
+      <tr class="highlight"><td class="label"><strong>Recommended Regime:</strong></td><td><strong>${oldResult.totalTax > newResult.totalTax ? 'NEW REGIME' : 'OLD REGIME'}</strong></td></tr>
+      <tr><td class="label">Potential Savings:</td><td>${formatCurrency(Math.abs(oldResult.totalTax - newResult.totalTax))}</td></tr>
+    </table>
+  </div>
+
+  <div class="footer">
+    <p><strong>DISCLAIMER:</strong></p>
+    <p>This report is generated for information purposes only. The calculations are based on the Indian Income Tax Act and rates applicable for FY ${financialYear}. Please consult a qualified tax professional before filing your income tax return. The developer assumes no liability for any errors or omissions in this report.</p>
+    <p>Generated by: Indian Income Tax Calculator | Report Date: ${formatDate()}</p>
+  </div>
+</body>
+</html>
+  `;
+  return html;
+}
+
+/**
+ * Exports calculation results to PDF using browser print
+ * @param {Object} state - Application state
+ * @param {string} fullName - User's full name
+ * @param {string} financialYear - Financial year (e.g., '2025-26')
+ * @returns {void}
+ */
+function exportToPDF(state, fullName, financialYear) {
+  try {
+    const htmlContent = generatePDFHTML(state, fullName, financialYear);
+    
+    // Create a new window
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+    
+    // Wait for content to load, then print
+    printWindow.onload = function() {
+      printWindow.print();
+    };
+    
+    // Alternative: if print dialog doesn't show, close after a delay
+    setTimeout(() => {
+      if (printWindow && !printWindow.closed) {
+        printWindow.close();
+      }
+    }, 1000);
+  } catch (error) {
+    console.error('❌ PDF generation failed:', error);
+    throw new Error('Failed to generate PDF: ' + error.message);
+  }
+}
+
+/**
  * Exports calculation results to CSV file
  * @param {Object} state - Application state
  * @param {string} fullName - User's full name
@@ -343,6 +508,8 @@ export async function handleExport(format = 'text') {
     // Export based on format
     if (format === 'csv') {
       exportToCSV(state, fullName, financialYear);
+    } else if (format === 'pdf') {
+      exportToPDF(state, fullName, financialYear);
     } else {
       // Default to text export
       exportToText(state, fullName, financialYear);

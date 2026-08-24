@@ -150,7 +150,7 @@ function initializeExportButton() {
     // Add click event listener
     exportButton.addEventListener('click', async (e) => {
       e.preventDefault();
-      await handleExport('text'); // Export as text by default
+      await handleExport('pdf'); // Export as PDF
     });
     
     console.log('✓ Export button initialized');
