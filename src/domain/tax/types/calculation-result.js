@@ -209,6 +209,14 @@ export function createDetailedResult({
   totalTax,
   regime,
   financialYear,
+  // Special income tax breakdown
+  ordinaryIncome,
+  ordinaryIncomeTax,
+  stcgTax,
+  ltcgEquityTax,
+  ltcgRealEstateTax,
+  speculativeTax,
+  fnoTax,
 }) {
   // Validate numeric values
   const numericValues = [
@@ -237,6 +245,14 @@ export function createDetailedResult({
     totalTax,
     regime,
     financialYear,
+    // Special income tax breakdown
+    ordinaryIncome,
+    ordinaryIncomeTax,
+    stcgTax,
+    ltcgEquityTax,
+    ltcgRealEstateTax,
+    speculativeTax,
+    fnoTax,
   };
 }
 

@@ -144,7 +144,14 @@ export function calculateDeductions(deductions, regime, financialYear, salary) {
 }
 
 /**
- * Calculates tax for a given income and regime with full breakdown
+ * Calculates tax with proper treatment of special income types
+ * STCG: 20% flat
+ * LTCG Equity: 12.5% flat + 1.25L exemption
+ * LTCG Real Estate: 12.5% flat
+ * Speculative: 30% flat
+ * F&O: Standard slab
+ * Interest/Dividend: Standard slab
+ * 
  * @param {Object} income - Income object with all income types
  * @param {Object} deductions - Deductions object
  * @param {Object} rules - Tax rules object with slabs, surcharge, etc.
@@ -160,40 +167,89 @@ export function calculateTax(income, deductions, rules) {
   const financialYear = rules.financialYear;
   const salary = parseFloat(income?.salary) || 0;
 
-  // Step 1: Calculate gross total income
-  const grossIncome = calculateGrossIncome(income);
+  // Extract different income types
+  const ordinaryIncome = (parseFloat(income?.salary) || 0) +
+                         (parseFloat(income?.houseProperty) || 0) +
+                         (parseFloat(income?.business) || 0) +
+                         (parseFloat(income?.interestIncome) || 0) +
+                         (parseFloat(income?.dividendIncome) || 0) +
+                         (parseFloat(income?.otherTaxable) || 0) +
+                         (parseFloat(income?.otherIncome) || 0);
 
-  // Step 2: Calculate deductions
+  const stcgEquity = parseFloat(income?.stcgEquity) || 0;
+  const stcgOther = parseFloat(income?.stcgOther) || 0;
+  const ltcgEquity = parseFloat(income?.ltcgEquity) || 0;
+  const ltcgOther = parseFloat(income?.ltcgOther) || 0; // Real estate
+  const speculativeGains = parseFloat(income?.speculativeGains) || 0;
+  const speculativeLosses = parseFloat(income?.speculativeLosses) || 0;
+  const fnoGains = parseFloat(income?.fnoGains) || 0;
+  const fnoLosses = parseFloat(income?.fnoLosses) || 0;
+  const capitalGains = parseFloat(income?.capitalGains) || 0; // Legacy
+
+  // Calculate net special income
+  const netSTCG = stcgEquity + stcgOther + capitalGains;
+  const netLTCGEquity = ltcgEquity;
+  const netLTCGRealEstate = ltcgOther;
+  const netSpeculative = Math.max(0, speculativeGains - speculativeLosses);
+  const netFnO = fnoGains - fnoLosses;
+
+  // Calculate deductions
   const deductionBreakdown = calculateDeductions(deductions, regime, financialYear, salary);
   const totalDeductions = deductionBreakdown.totalDeductions;
 
-  // Step 3: Calculate taxable income
-  const taxableIncome = Math.max(0, grossIncome - totalDeductions);
+  // Step 1: Calculate ordinary income tax (using standard slabs)
+  const taxableOrdinaryIncome = Math.max(0, ordinaryIncome - totalDeductions);
+  const ordinaryIncomeTax = calculateIncomeTax(taxableOrdinaryIncome, rules.taxSlabs);
 
-  // Step 4: Calculate income tax using slabs
-  const incomeTax = calculateIncomeTax(taxableIncome, rules.taxSlabs);
+  // Step 2: Calculate special income taxes (flat rates)
+  // STCG: 20% flat
+  const stcgTax = netSTCG * 0.20;
 
-  // Step 5: Apply Section 87A rebate
-  const rebate = calculateRebate87A(taxableIncome, incomeTax, rules.rebates);
-  const taxAfterRebate = Math.max(0, incomeTax - rebate);
+  // LTCG Equity: 12.5% flat with 1.25L exemption
+  const ltcgEquityExemption = Math.min(125000, netLTCGEquity);
+  const ltcgEquityTaxable = Math.max(0, netLTCGEquity - ltcgEquityExemption);
+  const ltcgEquityTax = ltcgEquityTaxable * 0.125;
 
-  // Step 6: Calculate surcharge
+  // LTCG Real Estate: 12.5% flat (no exemption)
+  const ltcgRealEstateTax = netLTCGRealEstate * 0.125;
+
+  // Speculative: 30% flat
+  const speculativeTax = netSpeculative * 0.30;
+
+  // F&O: Standard slab (business income treatment)
+  const fnoTaxable = Math.max(0, netFnO);
+  const fnoTax = calculateIncomeTax(fnoTaxable, rules.taxSlabs);
+
+  // Total income tax before rebate
+  const totalIncomeTax = ordinaryIncomeTax + stcgTax + ltcgEquityTax + ltcgRealEstateTax + speculativeTax + fnoTax;
+
+  // Calculate gross total income for surcharge basis
+  const grossIncome = ordinaryIncome + netSTCG + netLTCGEquity + netLTCGRealEstate + netSpeculative + netFnO;
+
+  // Step 3: Apply Section 87A rebate (on ordinary income only)
+  const rebate = calculateRebate87A(taxableOrdinaryIncome, ordinaryIncomeTax, rules.rebates);
+  const taxAfterRebate = Math.max(0, totalIncomeTax - rebate);
+
+  // Step 4: Calculate surcharge (on total income including special income)
   const surcharge = calculateSurcharge(grossIncome, taxAfterRebate, rules.surcharge);
 
-  // Step 7: Calculate Health & Education Cess
+  // Step 5: Calculate Health & Education Cess
   const taxBeforeCess = taxAfterRebate + surcharge;
   const cess = calculateCess(taxBeforeCess, rules.cess.rate);
 
-  // Step 8: Total tax payable
+  // Step 6: Total tax payable
   const totalTax = taxAfterRebate + surcharge + cess;
+
+  // Recalculate taxable income for display
+  const effectiveTaxableIncome = grossIncome - totalDeductions;
 
   // Create detailed result
   return createDetailedResult({
     grossIncome,
     totalDeductions,
     deductionBreakdown,
-    taxableIncome,
-    incomeTax,
+    taxableIncome: effectiveTaxableIncome,
+    incomeTax: totalIncomeTax,
     rebate,
     taxAfterRebate,
     surcharge,
@@ -201,6 +257,14 @@ export function calculateTax(income, deductions, rules) {
     totalTax,
     regime,
     financialYear,
+    // Detailed breakdown
+    ordinaryIncome,
+    ordinaryIncomeTax,
+    stcgTax,
+    ltcgEquityTax,
+    ltcgRealEstateTax,
+    speculativeTax,
+    fnoTax,
   });
 }
 
