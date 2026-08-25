@@ -1,300 +1,263 @@
 # Indian Income Tax Calculator
 
-A static web application to compare income tax liability between the old and new Indian tax regimes.
+A static web application that compares income tax liability between the **Old** and **New** Indian tax regimes across multiple financial years — fully built end-to-end using an AI-agent development workflow.
 
-## 🚀 Quick Start for New Developers / AI Sessions
+**Status**: ✅ **Project Complete** — Live at [https://d1mbvedtrmbqg.cloudfront.net](https://d1mbvedtrmbqg.cloudfront.net)
 
-**First time working on this project?** Read these documents:
+---
 
-1. **[docs/PROJECT_HISTORY.md](docs/PROJECT_HISTORY.md)** - Complete development history
-2. **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture
-3. **[docs/REQUIREMENTS.md](docs/REQUIREMENTS.md)** - What's built and pending
-4. **[docs/plans/](docs/plans/)** - Implementation plans for each feature
+## 🤖 How This Project Was Built with AI Agents
 
-### Getting Started in 60 Seconds
+This entire project — architecture, code, tests, docs, and AWS deployment — was developed using an **AI-native development workflow**. Instead of one general-purpose assistant doing everything, the work was split across specialized agents, each with a narrow responsibility, so that plans were reviewed before code was written, code was tested before it was built, and builds were validated before they were deployed.
 
-```bash
-# Install dependencies
-npm install
+### The Agent Team
 
-# Run tests (192 tests, all should pass)
-npm test
+| Agent | Responsibility | Definition |
+|-------|-----------------|------------|
+| **Orchestrator** | Coordinates the full lifecycle, decides when human clarification is needed, and routes failures back to the right agent | [`.github/agents/orchestrator.agent.md`](.github/agents/orchestrator.agent.md) |
+| **Planner** | Reads requirements + existing code, then produces an implementation plan (files, tasks, tests, risks, acceptance criteria) before any code is touched | [`.github/agents/planner.agent.md`](.github/agents/planner.agent.md) |
+| **Developer** | Implements only the approved plan — writes code and tests, reports assumptions | [`.github/agents/developer.agent.md`](.github/agents/developer.agent.md) |
+| **Tester** | Independently validates the implementation against normal, boundary, invalid, and regression scenarios; reports failures honestly | [`.github/agents/tester.agent.md`](.github/agents/tester.agent.md) |
+| **Builder** | Verifies the project builds and packages cleanly for production | [`.github/agents/builder.agent.md`](.github/agents/builder.agent.md) |
+| **Deployer** | Deploys only validated builds to AWS (S3 + CloudFront), using least-privilege checks and post-deploy verification | [`.github/agents/deployer.agent.md`](.github/agents/deployer.agent.md) |
 
-# Start development server
-npm run serve
-# Open http://localhost:8080
+### The Workflow
+
+```text
+Requirement
+    |
+    v
+Orchestrator  --  decides if clarification is needed
+    |
+    v
+Planner  --  produces implementation plan
+    |
+    v
+Plan  --  reviewed by human when the change is significant
+    |
+    v
+Developer  --  implements the approved plan
+    |
+    v
+Tester  --  runs the test suite + edge cases
+    |
+    +---- FAIL ----> back to Developer
+    |
+    v
+Builder  --  produces & verifies the production build
+    |
+    +---- FAIL ----> back to Developer
+    |
+    v
+Deployer  --  ships the validated build to AWS
+    |
+    v
+Live on AWS (S3 + CloudFront)
 ```
 
+Full detail: [docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md)
+
+### Domain Skills Given to the Agents
+
+Rather than relying on general knowledge alone, the agents were equipped with reusable, project-specific **skills** that encode domain rules so results stay consistent across sessions:
+
+- [`tax-calculation`](.github/skills/tax-calculation) — Indian tax slab/regime rules, per-financial-year data, deduction limits
+- [`frontend-development`](.github/skills/frontend-development) — vanilla JS/HTML/CSS conventions used across the UI
+- [`testing`](.github/skills/testing) — how calculations, rules, and UI behavior are expected to be tested
+- [`accessibility`](.github/skills/accessibility) — WCAG expectations for form inputs and results
+- [`security-review`](.github/skills/security-review) — client-side and dependency risk checks
+- [`aws-deployment`](.github/skills/aws-deployment) — least-privilege S3 + CloudFront deployment steps
+
+### What Using AI Agents Achieved
+
+- **Every feature (TAX-001 → TAX-022) was planned before it was coded** — plans live in [docs/plans/](docs/plans/) so the reasoning behind each change is preserved.
+- **540 automated tests** were generated and continually run by the Tester agent, catching regressions immediately (e.g. capital gains/special-income inclusion bugs were caught and fixed via `Developer → Tester` loops — see the fix commits in `git log`, e.g. `725752c` and `ec7fc0a`).
+- **Architectural decisions were recorded**, not just implemented — see [ADR-001](docs/decisions/ADR-001-use-plain-javascript.md) for why plain JavaScript was chosen over a framework.
+- **Deployment to AWS (S3 + CloudFront) was automated** by the Deployer agent using [`deploy-to-aws.sh`](deploy-to-aws.sh), only after the Builder agent verified a clean production build.
+- **A full project history was kept as durable context** ([docs/PROJECT_HISTORY.md](docs/PROJECT_HISTORY.md)) specifically so a *new* AI session or human developer, even much later, can resume work without re-deriving prior decisions.
+
+If you (human or AI) are picking this project up in the future, read the [Coming Back After a Long Break](#-coming-back-after-a-long-break) section below first.
+
 ---
 
-## Project Status
+## ✅ Project Functionality (Completed)
 
-**Version**: 0.1.0 (Foundation Complete)  
-**Last Updated**: 2026-08-23
+The calculator is feature-complete for individual taxpayers comparing the Old vs. New regime.
 
-### ✅ Completed (TAX-001 to TAX-008)
-- Static website foundation with three-layer architecture
-- Application header with dynamic financial year display
-- Financial year selection (2024-25)
-- 5 income input types (salary, house property, business, capital gains, other)
-- Input validation and normalization
-- 192 passing tests
+### Financial Years Supported
+- FY 2024-25
+- FY 2025-26 *(default)*
+- FY 2026-27
 
-### 🔲 Pending
-- Tax calculation logic (Old vs New regime)
-- Results display UI
-- AWS deployment
+New years are added purely as data — see [Adding a New Financial Year](#adding-a-new-financial-year).
+
+### Income Types Captured
+- Salary income
+- House property income (supports negative values for home-loan-interest loss)
+- Business / professional income
+- Capital gains — STCG (equity & other), LTCG (equity & other)
+- Trading income — speculative gains/losses, F&O gains/losses
+- Other income — interest income, dividend income, other taxable income
+
+### Deductions & Exemptions (Old Regime)
+- Standard deduction (auto-applied)
+- Section 80C, 80CCD(1B), 80D, 80E, 80G, 80TTA, 80TTB
+- HRA, LTA, home loan interest (Section 24), other deductions
+
+### Tax Engine
+- Full Old Regime calculation: slabs, standard deduction, all Chapter VI-A deductions, rebate u/s 87A, surcharge, health & education cess
+- Full New Regime calculation: revised slabs, rebate u/s 87A, surcharge, cess
+- Regime selector (auto-compare, or pick Old/New explicitly)
+- Side-by-side comparison with tax difference and recommended regime
+
+### UI / UX
+- Responsive, Material-Design-inspired layout with collapsible income/deduction sections
+- Dynamic financial-year-aware header
+- Form validation with inline error messages
+- "Clear" button that fully resets the form and state
+- **Download Tax Report as PDF** — generates a full, professional PDF (via browser print) with income, deductions, both regimes' calculations, and the recommendation
+- Mobile-friendly
+
+### Quality
+- **540 automated tests passing** across validators, normalizers, formatters, tax rules, calculation engine, and UI components
+- ESLint clean
+- Deployed and live on AWS (S3 origin + CloudFront CDN)
+
+### Known Limitations
+- Individual resident taxpayers only (no NRI / senior-citizen-specific UI toggle, though senior citizen rule data exists in the domain layer)
+- No PDF export beyond the browser print-to-PDF flow (no server-side PDF generation)
+- No backend — nothing is stored; every calculation happens client-side
 
 ---
-
-## Project Type
-
-Static website (no backend, no database).
-
-## Technologies
-
-- HTML5 with semantic markup
-- CSS3 with responsive design
-- Modern JavaScript (ES modules)
-- Vitest for testing
-- ESLint for code quality
 
 ## Quick Start
 
 ### Prerequisites
-
-- Node.js 18+ (for development)
+- Node.js 18+
 - npm 9+
 
-### Installation
+### Install & Run
 
 ```bash
-# Clone repository and navigate to project
-cd regime-calculator
-
 # Install dependencies
 npm install
-```
 
-### Development Server
-
-```bash
-# Start development server on http://localhost:8080
-npm run serve
-```
-
-Then open your browser to `http://localhost:8080`.
-
-## Running Tests
-
-```bash
-# Run all tests once
+# Run the full test suite (540 tests)
 npm test
 
-# Run tests in watch mode (auto-rerun on file changes)
-npm run test:watch
-
-# Generate coverage report
-npm run test:coverage
+# Start the local dev server
+npm run serve
+# Open http://localhost:8080
 ```
 
-### Test Coverage
-
-Current test stats:
-- **Total Tests**: 192 passing ✅
-- **Test Files**: 5
-- **Coverage Target**: 80%+ for business logic
-
-Test breakdown:
-- Validators: 35 tests
-- Normalizers: 41 tests  
-- Formatters: 30 tests
-- Header Component: 61 tests
-- Integration: 25 tests
-
-## Code Quality
+### Other useful commands
 
 ```bash
-# Check code with ESLint
-npm run lint
-
-# Automatically fix linting issues
-npm run lint:fix
+npm run test:watch     # Re-run tests on file change
+npm run test:coverage  # Generate coverage report
+npm run lint           # Check code style
+npm run lint:fix       # Auto-fix lint issues
 ```
+
+---
 
 ## Project Structure
 
-See [docs/FOUNDATION_ARCHITECTURE.md](docs/FOUNDATION_ARCHITECTURE.md) for complete architecture documentation.
+```
+src/
+  app/        - Application layer: state, validation, normalization, tax orchestration
+  domain/     - Domain layer: tax types, calculation engine, per-financial-year rules
+  shared/     - Shared constants, formatting, helpers
+  ui/         - UI layer: components, views, styles
+tests/        - Unit & integration tests (540 tests)
+docs/         - Architecture, requirements, plans, decisions, project history
+.github/
+  agents/     - AI agent role definitions (Orchestrator, Planner, Developer, Tester, Builder, Deployer)
+  skills/     - Reusable domain skills the agents draw on
+index.html    - Application entry point
+deploy-to-aws.sh - Deployer agent's AWS deployment script (S3 + CloudFront)
+```
 
-Key directories:
-- `src/` - Application source code
-- `tests/` - Test files
-- `docs/` - Documentation
-- `index.html` - Application entry point
-
-## Features
-
-### Implemented (Phase 1)
-- ✅ Static website with semantic HTML
-- ✅ Responsive CSS layout
-- ✅ Application header with dynamic FY display
-- ✅ Financial year selection dropdown
-- ✅ 5 income input fields:
-  - Salary Income (non-negative)
-  - House Property Income (can be negative for loss)
-  - Business/Professional Income (non-negative)
-  - Capital Gains (non-negative, kept separate)
-  - Other Income (non-negative)
-- ✅ Input validation and normalization
-- ✅ Indian currency formatting
-- ✅ Immutable state management
-- ✅ Comprehensive test suite (192 tests)
-
-### Pending (Phase 2)
-- 🔲 Old regime tax calculation
-- 🔲 New regime tax calculation
-- 🔲 Side-by-side comparison UI
-- 🔲 Tax savings recommendations
-- 🔲 Deductions support (80C, 80D, etc.)
-
-### Architecture Highlights
-- **Separation of Concerns**: UI, App, Domain, and Shared layers
-- **Pure Functions**: All calculations are side-effect free
-- **Immutable State**: State updates create new objects
-- **Tax Rules as Data**: Easy to add new financial years
-- **Test-Friendly**: Business logic runs in Node without DOM
-
-## How to Use
-
-1. Open the application in your browser (http://localhost:8080)
-2. Enter your salary income and other income (if applicable)
-3. Select the financial year (2024-25 supported)
-4. Click "Calculate" to see the tax comparison
-5. View results showing:
-   - Old regime tax calculation
-   - New regime tax calculation
-   - Which regime is beneficial
-   - Tax savings potential
-
-## Financial Years Supported
-
-- FY 2024-25 (Current)
-
-Future years can be added by creating new rule files in `src/domain/rules/financial-years/`.
-
-## Assumptions & Limitations
-
-### Assumptions
-- User is an individual resident of India
-- No specific deductions claimed (uses standard deduction)
-- All income is from salary and other sources
-- Calculations are for informational purposes only
-
-### Known Limitations
-- No support for specific deductions (80C, 80D, etc.)
-- No support for special taxpayer categories (Senior Citizens, NRI)
-- No export functionality (copy results manually)
-- Web-only (no mobile app)
-
-## Documentation
-
-### For New Developers / AI Sessions
-- **[PROJECT_HISTORY.md](docs/PROJECT_HISTORY.md)** - Complete development history and context
-- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture
-- **[REQUIREMENTS.md](docs/REQUIREMENTS.md)** - Working requirement index
-
-### Technical Documentation
-- [FOUNDATION_ARCHITECTURE.md](docs/FOUNDATION_ARCHITECTURE.md) - Detailed architecture
-- [DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md) - AI agent workflow
-- [PRD.md](docs/PRD.md) - Product requirements
-- [CHANGELOG.md](CHANGELOG.md) - Version history
-
-### Implementation Plans
-- [PLAN-TAX-001](docs/plans/PLAN-TAX-001-static-website-foundation.md) - Foundation
-- [PLAN-TAX-002](docs/plans/PLAN-TAX-002-application-header.md) - Header
-- [PLAN-TAX-003](docs/plans/PLAN-TAX-003-financial-year-selection.md) - FY Selection
-- [PLAN-TAX-004](docs/plans/PLAN-TAX-004-salary-income-input.md) - Salary Input
-- [PLAN-TAX-005](docs/plans/PLAN-TAX-005-house-property-income.md) - House Property
-- [PLAN-TAX-006](docs/plans/PLAN-TAX-006-business-income.md) - Business Income
-- [PLAN-TAX-007](docs/plans/PLAN-TAX-007-capital-gains.md) - Capital Gains
-- [PLAN-TAX-008](docs/plans/PLAN-TAX-008-other-income.md) - Other Income
-
-### Architectural Decisions
-- [ADR-001](docs/decisions/ADR-001-use-plain-javascript.md) - Use Plain JavaScript
-
-## AI Development Framework
-
-This project uses an AI-native development approach with specialized agents:
-
-| Agent | Purpose |
-|-------|---------|
-| **Orchestrator** | Coordinates overall workflow |
-| **Planner** | Creates implementation plans |
-| **Developer** | Implements features |
-| **Tester** | Validates with tests |
-| **Builder** | Creates production builds |
-| **Deployer** | Handles AWS deployment |
-
-Agent definitions: `.github/agents/`  
-Skills: `.github/skills/`
-
-## Development Notes
+Full architecture detail: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/FOUNDATION_ARCHITECTURE.md](docs/FOUNDATION_ARCHITECTURE.md)
 
 ### Adding a New Financial Year
 
-1. Create rule file: `src/domain/rules/financial-years/fy-YYYY-YY.js`
-2. Define tax rules (slabs, surcharge, cess) as data
-3. Export `oldRegimeRules` and `newRegimeRules`
-4. Update `src/domain/rules/financial-years/index.js`
-5. Add year to `SUPPORTED_YEARS` constant
-6. Write tests
+1. Create `src/domain/rules/financial-years/fy-YYYY-YY.js`
+2. Define `oldRegimeRules`, `newRegimeRules` (and `seniorCitizenRules` if applicable) as plain data
+3. Register it in [`src/domain/rules/financial-years/index.js`](src/domain/rules/financial-years/index.js)
+4. Add the year to `SUPPORTED_YEARS` in [`src/shared/constants/financial-years.js`](src/shared/constants/financial-years.js)
+5. Add tests under `tests/` mirroring an existing year's test file
+6. Run `npm test` and `npm run lint`
 
-See [docs/FOUNDATION_ARCHITECTURE.md](docs/FOUNDATION_ARCHITECTURE.md) for detailed guidance.
+---
 
-### Code Standards
+## Deployment
 
-- **ES Modules**: All files use `import`/`export`
-- **JSDoc**: All functions documented with parameters and return types
-- **Pure Functions**: No side effects in business logic
-- **Error Handling**: Explicit validation with error messages
-- **Testing**: Minimum 80% coverage for business logic
+The site is a static build deployed to **AWS S3 + CloudFront**:
+
+- S3 (HTTP): `http://indian-tax-calculator-1787591375571.s3-website-us-east-1.amazonaws.com`
+- CloudFront (HTTPS): `https://d1mbvedtrmbqg.cloudfront.net`
+
+Redeploying (after Builder verifies the build):
+
+```bash
+./deploy-to-aws.sh
+```
+
+This syncs `dist/` to S3 and invalidates the CloudFront cache. See [docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md) for how the Deployer agent gates this step behind test + build validation.
+
+---
 
 ## Security & Privacy
 
-- **No Backend**: All calculations happen in your browser
-- **No Data Collection**: No tracking, analytics, or data transmission
-- **No External Dependencies**: All tax rules are hardcoded (not fetched)
-- **Open Source**: All code is visible and auditable
+- **No backend** — all calculations run in the browser
+- **No data collection** — no tracking, analytics, or network transmission of user data
+- **No external tax-rule fetching** — all rules are versioned in source code per financial year
+- Open source and auditable
 
-## Troubleshooting
+---
 
-### Tests failing after changes
-```bash
-npm run lint:fix  # Fix any linting issues first
-npm test          # Run tests to identify problems
-```
+## 🔮 Coming Back After a Long Break
 
-### CSS not loading
-- Ensure all CSS files are in `src/ui/styles/`
-- Check that `main.css` imports them in the correct order
-- Clear browser cache (Ctrl+Shift+Del or Cmd+Shift+Del)
+If you (a human or a new AI session) are returning to this project after a year — or any long gap — here is the fastest path back to full context, in order:
 
-### Form not responding
-- Open browser console (F12) and check for errors
-- Ensure `src/app/main.js` has initialized (no errors on page load)
-- Check that event listeners are attached with `npm run serve`
+1. **Read [docs/PROJECT_HISTORY.md](docs/PROJECT_HISTORY.md)** — the complete narrative of every session, decision, and issue encountered, written specifically so no prior context is assumed.
+2. **Read [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md)** — the full TAX-001 → TAX-022 requirement index with status, so you know exactly what exists.
+3. **Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** and [docs/FOUNDATION_ARCHITECTURE.md](docs/FOUNDATION_ARCHITECTURE.md) — the current system design.
+4. **Skim `git log --oneline`** for what changed and when — commit messages capture each fix and feature in sequence.
+5. **Run `npm install && npm test`** — confirm the 540 tests still pass on your machine before changing anything. If dependencies feel stale, check `package.json` engine expectations first.
+6. **Check whether tax law has changed.** Indian tax slabs/rules typically change every Union Budget (~February). Before trusting any calculation:
+   - Compare `src/domain/rules/financial-years/*` against the latest official rules at [incometaxindia.gov.in](https://incometaxindia.gov.in/pages/i-am/individual.aspx).
+   - If a new financial year needs support, follow [Adding a New Financial Year](#adding-a-new-financial-year) — do **not** edit past years' rule files.
+7. **Reuse the AI agent workflow** described above ([docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md)) rather than making ad-hoc changes: start with the Planner agent for anything beyond a trivial fix, so a plan and rationale get recorded for the *next* person who comes back after a year.
+8. **Verify the live deployment** at `https://d1mbvedtrmbqg.cloudfront.net` still matches `main`/`develop` before assuming production is current — CloudFront/S3 credentials or the distribution ID in [`deploy-to-aws.sh`](deploy-to-aws.sh) may need to be reconfirmed if AWS account access has changed.
+9. **Update this README and [docs/PROJECT_HISTORY.md](docs/PROJECT_HISTORY.md)** once you've made changes, the same way this update was made — so the project stays self-explanatory for whoever (or whatever) opens it next.
+
+---
+
+## Documentation Index
+
+- [docs/PROJECT_HISTORY.md](docs/PROJECT_HISTORY.md) — Complete development history
+- [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) — Requirement index (built vs. pending)
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) / [docs/FOUNDATION_ARCHITECTURE.md](docs/FOUNDATION_ARCHITECTURE.md) — System design
+- [docs/PRD.md](docs/PRD.md) — Product requirements
+- [docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md) — AI agent workflow
+- [docs/BACKLOG.md](docs/BACKLOG.md) — Future/backlog items
+- [docs/plans/](docs/plans/) — Per-feature implementation plans
+- [docs/decisions/](docs/decisions/) — Architectural decision records
+- `git log` — Version history and notable bug fixes (each commit message documents the change)
 
 ## Support
 
 For issues or suggestions:
-1. Check the documentation in `docs/`
-2. Review test files for usage examples
-3. Check browser console for error messages
+1. Check [docs/](docs/) for existing context first
+2. Review `tests/` for expected behavior/usage examples
+3. Check the browser console for runtime errors
 
 ## License
 
-[Project license information to be added]
+MIT
 
 ## Version
 
-0.1.0 - Foundation Phase Complete
+1.0.0 — Feature Complete
