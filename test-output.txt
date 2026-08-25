@@ -1,0 +1,244 @@
+
+> indian-income-tax-calculator@0.1.0 test
+> vitest --reporter=verbose
+
+
+ DEV  v1.6.1 /Users/rajesh.jaiswal/Desktop/AI/Bootcamp/regime-calculator
+
+ ✓ tests/unit/app/validation/validators.test.js > validateNumericIncome > should accept valid positive numbers
+ ✓ tests/unit/app/validation/validators.test.js > validateNumericIncome > should accept zero
+ ✓ tests/unit/app/validation/validators.test.js > validateNumericIncome > should accept string numbers
+ ✓ tests/unit/app/validation/validators.test.js > validateNumericIncome > should reject negative numbers
+ ✓ tests/unit/app/validation/validators.test.js > validateNumericIncome > should reject non-numeric strings
+ ✓ tests/unit/app/validation/validators.test.js > validateNumericIncome > should reject empty/null/undefined
+ ✓ tests/unit/app/validation/validators.test.js > validateNumericIncome > should reject infinity
+ ✓ tests/unit/app/validation/validators.test.js > validateNumericIncome > should reject very large numbers
+ ✓ tests/unit/app/validation/validators.test.js > validateNumericIncome > should include field name in error message
+ ✓ tests/unit/app/validation/validators.test.js > validateFinancialYear > should accept supported years
+ ✓ tests/unit/app/validation/validators.test.js > validateFinancialYear > should reject unsupported years
+ ✓ tests/unit/app/validation/validators.test.js > validateFinancialYear > should reject null/undefined
+ ✓ tests/unit/app/validation/validators.test.js > validateFinancialYear > should reject non-string values
+ ✓ tests/unit/app/validation/validators.test.js > validateFinancialYear > should reject empty string
+ ✓ tests/unit/app/validation/validators.test.js > validateIncomeInput > should accept valid complete input
+ ✓ tests/unit/app/validation/validators.test.js > validateIncomeInput > should reject zero income from both sources
+ ✓ tests/unit/app/validation/validators.test.js > validateIncomeInput > should accept non-zero salary with zero other income
+ ✓ tests/unit/app/validation/validators.test.js > validateIncomeInput > should accept non-zero other income with zero salary
+ ✓ tests/unit/app/validation/validators.test.js > validateIncomeInput > should collect all errors
+ ✓ tests/unit/app/validation/validators.test.js > validateIncomeInput > should reject invalid input objects
+ ✓ tests/unit/app/validation/validators.test.js > validateIncomeField > should validate salary field
+ ✓ tests/unit/app/validation/validators.test.js > validateIncomeField > should validate otherIncome field
+ ✓ tests/unit/app/validation/validators.test.js > validateIncomeField > should reject negative salary
+ ✓ tests/unit/app/validation/validators.test.js > validateIncomeField > should reject negative other income
+ ✓ tests/unit/app/validation/validators.test.js > validateFormSubmission > should accept valid form data
+ ✓ tests/unit/app/validation/validators.test.js > validateFormSubmission > should organize errors by field
+ ✓ tests/unit/app/validation/validators.test.js > validateFormSubmission > should add general errors array
+ ✓ tests/unit/app/validation/validators.test.js > validateFormSubmission > should handle string and numeric inputs
+ ✓ tests/unit/app/validation/validators.test.js > validateFormSubmission > should reject invalid form data object
+ ✓ tests/unit/app/validation/validators.test.js > validateFormSubmission > should handle boundary values
+ ✓ tests/unit/app/validation/validators.test.js > validateFormSubmission > should handle high income values
+ ✓ tests/unit/app/validation/validators.test.js > Comprehensive income validation scenarios > should validate no tax scenario (below exemption)
+ ✓ tests/unit/app/validation/validators.test.js > Comprehensive income validation scenarios > should validate at tax slab boundary
+ ✓ tests/unit/app/validation/validators.test.js > Comprehensive income validation scenarios > should validate high income with surcharge
+ ✓ tests/unit/app/validation/validators.test.js > Comprehensive income validation scenarios > should validate mixed income sources
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeNumericInput > should return numbers as-is
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeNumericInput > should parse string numbers
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeNumericInput > should remove currency symbols
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeNumericInput > should remove commas
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeNumericInput > should handle spaces
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeNumericInput > should handle negative numbers
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeNumericInput > should return 0 for null/undefined
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeNumericInput > should return 0 for invalid strings
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeNumericInput > should handle decimal numbers
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeNumericInput > should handle Indian currency format
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeNumericInput > should handle empty string
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeFinancialYear > should accept and return valid format
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeFinancialYear > should convert slash format
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeFinancialYear > should convert 8-digit format
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeFinancialYear > should handle leading/trailing spaces
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeFinancialYear > should pad single-digit year suffix
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeFinancialYear > should return empty string for invalid input
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeFinancialYear > should return empty for null/undefined
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeFinancialYear > should return empty for non-string
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeFormInput > should normalize both salary and otherIncome
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeFormInput > should handle mixed input types
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeFormInput > should return zero for invalid inputs
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeFormInput > should handle null input object
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > cleanInputForCalculation > should normalize all input fields
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > cleanInputForCalculation > should handle partial input
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > cleanInputForCalculation > should return default values for null
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeText > should trim whitespace
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeText > should return empty string for null/undefined
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeText > should convert non-strings
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeText > should preserve text content
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeBoolean > should pass through booleans
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeBoolean > should parse truthy strings
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeBoolean > should parse falsy strings
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeBoolean > should handle numbers
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > normalizeBoolean > should be case-insensitive
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > formatNumericForDisplay > should format numbers with Indian locale
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > formatNumericForDisplay > should handle currency input
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > formatNumericForDisplay > should return 0 for invalid input
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > Complex normalization scenarios > should handle real form submission data
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > Complex normalization scenarios > should normalize mixed user input formats
+ ✓ tests/unit/app/input-normalization/normalizers.test.js > Complex normalization scenarios > should handle edge case: very large numbers
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatIndianCurrency > should format zero correctly
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatIndianCurrency > should format small positive numbers
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatIndianCurrency > should format numbers with Indian comma format
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatIndianCurrency > should format exactly 5 lakh correctly
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatIndianCurrency > should handle numbers just below and above 5 lakh
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatIndianCurrency > should handle high income values
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatIndianCurrency > should format negative numbers
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatIndianCurrency > should format decimal values
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatIndianCurrency > should throw error for non-number input
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatIndianCurrency > should throw error for non-finite numbers
+ ✓ tests/unit/shared/formatting/formatters.test.js > parseIndianCurrency > should parse zero correctly
+ ✓ tests/unit/shared/formatting/formatters.test.js > parseIndianCurrency > should parse simple amounts
+ ✓ tests/unit/shared/formatting/formatters.test.js > parseIndianCurrency > should parse amounts with Indian comma format
+ ✓ tests/unit/shared/formatting/formatters.test.js > parseIndianCurrency > should handle strings without currency symbol
+ ✓ tests/unit/shared/formatting/formatters.test.js > parseIndianCurrency > should handle negative values
+ ✓ tests/unit/shared/formatting/formatters.test.js > parseIndianCurrency > should handle decimal values
+ ✓ tests/unit/shared/formatting/formatters.test.js > parseIndianCurrency > should handle whitespace
+ ✓ tests/unit/shared/formatting/formatters.test.js > parseIndianCurrency > should throw error for non-string input
+ ✓ tests/unit/shared/formatting/formatters.test.js > parseIndianCurrency > should throw error for invalid format
+ ✓ tests/unit/shared/formatting/formatters.test.js > Round-trip currency conversion > should format and parse correctly
+ ✓ tests/unit/shared/formatting/formatters.test.js > Round-trip currency conversion > should handle round-trip with negative values
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatNumber > should format zero
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatNumber > should format positive numbers
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatNumber > should format with decimals
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatNumber > should round to specified decimals
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatNumber > should throw for non-number
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatPercentage > should format zero percent
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatPercentage > should format positive percentages
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatPercentage > should format with custom decimal places
+ ✓ tests/unit/shared/formatting/formatters.test.js > formatPercentage > should throw for non-number input
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Rendering Tests > should render header element with correct class
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Rendering Tests > should render header with role="banner"
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Rendering Tests > should render header with aria-label
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Rendering Tests > should render correct title text
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Rendering Tests > should render correct description text
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Rendering Tests > should render initial financial year as 2024-25
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Rendering Tests > should have header__container element
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Rendering Tests > should have header__content element
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Rendering Tests > should have header__title element with correct class
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Rendering Tests > should have header__description element with correct class
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Rendering Tests > should have header__context element with correct class
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Rendering Tests > should have current-fy span element
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Rendering Tests > should have aria-live="polite" on financial year span
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Rendering Tests > should have role="status" on financial year span
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Initialization Tests > should initialize header successfully when all elements present
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Initialization Tests > should return false when header element missing
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Initialization Tests > should return false when title element missing
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Initialization Tests > should return false when description element missing
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Initialization Tests > should return false when financial year span missing
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should update financial year text when called with valid year
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should update multiple times correctly
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should handle special financial year formats
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should not update if year is null
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should not update if year is undefined
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should not update if year is empty string
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should not update if year is only whitespace
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should handle year with special characters
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should warn if year is not a string
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should not update if current-fy element does not exist
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should update aria-live region for accessibility
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Get Financial Year Tests > should return current financial year
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Get Financial Year Tests > should return null if element does not exist
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Get Financial Year Tests > should return updated year after update
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Financial Year Format Validation Tests > should validate correct format YYYY-YY
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Financial Year Format Validation Tests > should reject invalid formats
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Financial Year Format Validation Tests > should reject non-string input
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Financial Year Format Validation Tests > should handle whitespace in string
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Financial Year Format Validation Tests > should reject strings with extra characters
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - DOM Reference Tests > should return header element reference
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - DOM Reference Tests > should return null if header not found
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - DOM Reference Tests > should return title text content
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - DOM Reference Tests > should return null for title if element missing
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - DOM Reference Tests > should return description text content
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - DOM Reference Tests > should return null for description if element missing
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Integration Tests > should initialize and allow updates
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Integration Tests > should maintain ARIA attributes after updates
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Integration Tests > should not break with rapid updates
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Integration Tests > should work with appView integration pattern
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Accessibility Tests > should have proper heading hierarchy (h1)
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Accessibility Tests > should have role="banner" on header
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Accessibility Tests > should have aria-label on header
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Accessibility Tests > should have aria-live="polite" on dynamic content
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Accessibility Tests > should have role="status" on status element
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Accessibility Tests > should announce financial year changes to screen readers
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Edge Cases > should handle very long financial year strings
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Edge Cases > should handle unicode characters in financial year
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Edge Cases > should handle repeated same year updates
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Edge Cases > should not throw on missing optional elements during update
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - Edge Cases > should handle whitespace-only string gracefully
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - CSS Classes Tests > should have all required CSS classes
+ ✓ tests/unit/ui/components/headerComponent.test.js > Header Component - CSS Classes Tests > should preserve CSS classes during updates
+stderr | tests/unit/ui/components/headerComponent.test.js > Header Component - Initialization Tests > should return false when header element missing
+initializeHeader: Header element not found in DOM
+
+stderr | tests/unit/ui/components/headerComponent.test.js > Header Component - Initialization Tests > should return false when title element missing
+initializeHeader: Header title element not found
+
+stderr | tests/unit/ui/components/headerComponent.test.js > Header Component - Initialization Tests > should return false when description element missing
+initializeHeader: Header description element not found
+
+stderr | tests/unit/ui/components/headerComponent.test.js > Header Component - Initialization Tests > should return false when financial year span missing
+initializeHeader: Financial year span element not found
+
+stderr | tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should not update if year is null
+updateHeaderFinancialYear: year must be a string, received: object
+
+stderr | tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should not update if year is undefined
+updateHeaderFinancialYear: year must be a string, received: undefined
+
+stderr | tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should not update if year is empty string
+updateHeaderFinancialYear: year cannot be empty
+
+stderr | tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should not update if year is only whitespace
+updateHeaderFinancialYear: year cannot be empty
+
+stderr | tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should warn if year is not a string
+updateHeaderFinancialYear: year must be a string, received: number
+
+stderr | tests/unit/ui/components/headerComponent.test.js > Header Component - Update Financial Year Tests > should not update if current-fy element does not exist
+updateHeaderFinancialYear: Element with id "current-fy" not found
+
+stderr | tests/unit/ui/components/headerComponent.test.js > Header Component - Edge Cases > should not throw on missing optional elements during update
+updateHeaderFinancialYear: Element with id "current-fy" not found
+
+stderr | tests/unit/ui/components/headerComponent.test.js > Header Component - Edge Cases > should handle whitespace-only string gracefully
+updateHeaderFinancialYear: year cannot be empty
+
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Complete calculation workflow > should calculate tax for zero income
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Complete calculation workflow > should calculate tax for salary only
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Complete calculation workflow > should calculate tax for other income only
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Complete calculation workflow > should calculate tax for mixed income sources
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Tax slab boundaries > should calculate correctly at old regime exemption limit
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Tax slab boundaries > should calculate just above exemption limit
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Tax slab boundaries > should calculate at ₹5 lakh boundary
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Regime comparison > should compare old and new regime correctly
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Regime comparison > should identify beneficial regime
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Regime comparison > should calculate savings percentage
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > High income scenarios > should calculate for high earner income
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > High income scenarios > should calculate cess correctly
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > High income scenarios > should calculate total tax correctly
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Error handling > should handle invalid financial year
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Error handling > should handle negative income
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Error handling > should handle invalid input type
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Error handling > should handle missing financial year
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > State management > should update state on successful calculation
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > State management > should set validation errors on invalid input
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > State management > should clear calculations on error
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > State management > should reset state correctly
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Input normalization in workflow > should normalize currency-formatted input
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Input normalization in workflow > should normalize year format variations
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Calculation validation > should ensure gross income >= taxable income
+ ✓ tests/integration/app/app-flow.test.js > Tax Calculation Integration Flow > Calculation validation > should ensure tax components are non-negative
+
+ Test Files  5 passed (5)
+      Tests  192 passed (192)
+   Start at  21:47:06
+   Duration  956ms (transform 87ms, setup 3.56s, collect 311ms, tests 60ms, environment 0ms, prepare 311ms)
+
+
+ PASS  Waiting for file changes...
+       press h to show help, press q to quit

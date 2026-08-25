@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Capital Gains Test - Tax Calculator</title>
+    <style>
+        body { font-family: Arial, monospace; max-width: 1200px; margin: 20px auto; }
+        .section { border: 2px solid #333; padding: 15px; margin: 10px 0; }
+        .input-group { margin: 10px 0; }
+        input { width: 120px; padding: 5px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        .result { background: #f0f0f0; padding: 10px; margin: 5px 0; }
+        .error { color: red; }
+        .success { color: green; }
+        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #333; color: white; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Capital Gains & Special Income Tax Test</h1>
+    
+    <div class="section">
+        <h2>Test Data Input</h2>
+        <p style="background:#ffffcc; padding:10px;">
+            ⚠️ This test enters data directly into the form and runs calculation through the application
+        </p>
+        
+        <div class="input-group">
+            <label>Financial Year: <select id="fy"><option>2025-26</option><option>2026-27</option></select></label>
+        </div>
+        
+        <div class="input-group">
+            <label>Tax Regime:</label>
+            <input type="radio" name="regime" value="old"> Old Regime
+            <input type="radio" name="regime" value="new" checked> New Regime
+        </div>
+
+        <div class="input-group">
+            <label>Full Name: <input type="text" id="name" value="Test User"></label>
+        </div>
+
+        <h3>Basic Income</h3>
+        <div class="input-group">
+            <label>Salary: ₹<input type="number" id="salary" value="500000"></label>
+        </div>
+
+        <h3>Capital Gains (SPECIAL INCOME)</h3>
+        <div class="input-group">
+            <label>STCG Equity (20% tax): ₹<input type="number" id="stcg-equity" value="100000"></label>
+        </div>
+        <div class="input-group">
+            <label>LTCG Equity (12.5% + ₹1.25L exempt): ₹<input type="number" id="ltcg-equity" value="200000"></label>
+        </div>
+        <div class="input-group">
+            <label>LTCG Real Estate (12.5%): ₹<input type="number" id="ltcg-other" value="0"></label>
+        </div>
+
+        <h3>Trading Income (SPECIAL INCOME)</h3>
+        <div class="input-group">
+            <label>Speculative Gains (30% tax): ₹<input type="number" id="speculative-gains" value="50000"></label>
+        </div>
+        <div class="input-group">
+            <label>F&O Gains (Slab rate): ₹<input type="number" id="fno-gains" value="25000"></label>
+        </div>
+
+        <h3>Other Income (SHOULD BE INCLUDED)</h3>
+        <div class="input-group">
+            <label>Interest Income: ₹<input type="number" id="interest-income" value="0"></label>
+        </div>
+        <div class="input-group">
+            <label>Dividend Income: ₹<input type="number" id="dividend-income" value="0"></label>
+        </div>
+        <div class="input-group">
+            <label>Other Taxable: ₹<input type="number" id="other-taxable" value="0"></label>
+        </div>
+
+        <h3>Deductions</h3>
+        <div class="input-group">
+            <label>Section 80C: ₹<input type="number" id="section-80c" value="150000"></label>
+        </div>
+
+        <button onclick="testCalculation()">▶️ RUN CALCULATION TEST</button>
+    </div>
+
+    <div class="section">
+        <h2>📊 Results</h2>
+        <div id="results"></div>
+    </div>
+
+    <div class="section">
+        <h2>🔍 Debug Console Logs</h2>
+        <div id="debug" style="background:#000; color:#0f0; padding:10px; height:300px; overflow-y:auto; font-size:12px;"></div>
+    </div>
+
+    <script type="module">
+        import { orchestrateCalculation } from './dist/src/app/tax-orchestration/coordinator.js';
+        import { appState } from './dist/src/app/state/appState.js';
+
+        // Capture console logs
+        const debugOutput = [];
+        const originalLog = console.log;
+        const originalError = console.error;
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            debugOutput.push(args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' '));
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            debugOutput.push('<span style="color:red;">' + args.join(' ') + '</span>');
+        };
+
+        window.testCalculation = async function() {
+            debugOutput.length = 0;
+            const resultsDiv = document.getElementById('results');
+            const debugDiv = document.getElementById('debug');
+
+            try {
+                // Collect form data
+                const formData = {
+                    fullName: document.getElementById('name').value,
+                    pan: '',
+                    financialYear: document.getElementById('fy').value,
+                    taxRegime: document.querySelector('input[name="regime"]:checked').value,
+                    
+                    // Basic income
+                    salary: document.getElementById('salary').value,
+                    houseProperty: '0',
+                    business: '0',
+                    capitalGains: '0',
+                    otherIncome: '0',
+                    
+                    // Capital gains
+                    stcgEquity: document.getElementById('stcg-equity').value,
+                    stcgOther: '0',
+                    ltcgEquity: document.getElementById('ltcg-equity').value,
+                    ltcgOther: document.getElementById('ltcg-other').value,
+                    
+                    // Trading
+                    speculativeGains: document.getElementById('speculative-gains').value,
+                    speculativeLosses: '0',
+                    fnoGains: document.getElementById('fno-gains').value,
+                    fnoLosses: '0',
+                    
+                    // Other income
+                    interestIncome: document.getElementById('interest-income').value,
+                    dividendIncome: document.getElementById('dividend-income').value,
+                    otherTaxable: document.getElementById('other-taxable').value,
+                    
+                    // Deductions
+                    deductions: {
+                        standardDeduction: '0',
+                        section80C: document.getElementById('section-80c').value,
+                        section80CCD1B: '0',
+                        section80D: '0',
+                        section80E: '0',
+                        section80G: '0',
+                        section80TTA: '0',
+                        section80TTB: '0',
+                        hra: '0',
+                        lta: '0',
+                        homeLoanInterest: '0',
+                        otherDeductions: '0',
+                    }
+                };
+
+                console.log('\n📋 TEST: INPUT DATA');
+                console.log('====================');
+                console.log('Salary:', formData.salary);
+                console.log('STCG Equity:', formData.stcgEquity);
+                console.log('LTCG Equity:', formData.ltcgEquity);
+                console.log('Speculative:', formData.speculativeGains);
+                console.log('F&O:', formData.fnoGains);
+                console.log('Interest:', formData.interestIncome);
+                console.log('Dividend:', formData.dividendIncome);
+                console.log('Other:', formData.otherTaxable);
+
+                // Run calculation
+                console.log('\n▶️ RUNNING ORCHESTRATION...');
+                const result = await orchestrateCalculation(formData);
+
+                if (!result.success) {
+                    resultsDiv.innerHTML = '<div class="error">❌ Calculation failed: ' + (result.errors || []).join(', ') + '</div>';
+                    return;
+                }
+
+                // Display results
+                const oldTax = result.result.oldRegime;
+                const newTax = result.result.newRegime;
+
+                let html = '<h3>✅ Calculation Successful</h3>';
+                html += '<h4>Expected Gross Income Calculation:</h4>';
+                html += '<table><tr><th>Component</th><th>Amount</th></tr>';
+                html += '<tr><td>Salary</td><td>₹' + Number(formData.salary).toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>STCG</td><td>₹' + Number(formData.stcgEquity).toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>LTCG</td><td>₹' + Number(formData.ltcgEquity).toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Speculative</td><td>₹' + Number(formData.speculativeGains).toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>F&O</td><td>₹' + Number(formData.fnoGains).toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Interest</td><td>₹' + Number(formData.interestIncome).toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Dividend</td><td>₹' + Number(formData.dividendIncome).toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Other</td><td>₹' + Number(formData.otherTaxable).toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr style="background:#ffff99;"><td><b>TOTAL</b></td><td><b>₹' + (
+                    Number(formData.salary) + Number(formData.stcgEquity) + Number(formData.ltcgEquity) +
+                    Number(formData.speculativeGains) + Number(formData.fnoGains) + Number(formData.interestIncome) +
+                    Number(formData.dividendIncome) + Number(formData.otherTaxable)
+                ).toLocaleString('en-IN') + '</b></td></tr>';
+                html += '</table>';
+
+                html += '<h4>OLD REGIME Results:</h4>';
+                html += '<table><tr><th>Item</th><th>Amount</th></tr>';
+                html += '<tr><td>Gross Income</td><td style="' + (oldTax.grossIncome !== (Number(formData.salary) + Number(formData.stcgEquity) + Number(formData.ltcgEquity) + Number(formData.speculativeGains) + Number(formData.fnoGains) + Number(formData.interestIncome) + Number(formData.dividendIncome) + Number(formData.otherTaxable)) ? 'background:red;color:white;' : '') + '">₹' + oldTax.grossIncome.toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Total Deductions</td><td>₹' + oldTax.totalDeductions.toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Taxable Income</td><td>₹' + oldTax.taxableIncome.toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td colspan="2"><b>Tax Breakdown:</b></td></tr>';
+                html += '<tr><td>  Ordinary Income Tax</td><td>₹' + (oldTax.ordinaryIncomeTax || 0).toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>  STCG Tax (20%)</td><td style="' + (oldTax.stcgTax > 0 ? 'background:#ccffcc;' : '') + '">₹' + (oldTax.stcgTax || 0).toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>  LTCG Tax (12.5%)</td><td style="' + (oldTax.ltcgEquityTax > 0 ? 'background:#ccffcc;' : '') + '">₹' + (oldTax.ltcgEquityTax || 0).toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>  Speculative Tax (30%)</td><td style="' + (oldTax.speculativeTax > 0 ? 'background:#ccffcc;' : '') + '">₹' + (oldTax.speculativeTax || 0).toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>  F&O Tax</td><td style="' + (oldTax.fnoTax > 0 ? 'background:#ccffcc;' : '') + '">₹' + (oldTax.fnoTax || 0).toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Total Income Tax</td><td>₹' + oldTax.incomeTax.toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Rebate (87A)</td><td>₹' + oldTax.rebate.toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Surcharge</td><td>₹' + oldTax.surcharge.toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Cess (4%)</td><td>₹' + oldTax.cess.toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr style="background:#ff9999;"><td><b>TOTAL TAX</b></td><td><b>₹' + oldTax.totalTax.toLocaleString('en-IN') + '</b></td></tr>';
+                html += '</table>';
+
+                html += '<h4>NEW REGIME Results:</h4>';
+                html += '<table><tr><th>Item</th><th>Amount</th></tr>';
+                html += '<tr><td>Gross Income</td><td>₹' + newTax.grossIncome.toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Total Deductions</td><td>₹' + newTax.totalDeductions.toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Taxable Income</td><td>₹' + newTax.taxableIncome.toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Income Tax</td><td>₹' + newTax.incomeTax.toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Rebate (87A)</td><td>₹' + newTax.rebate.toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Surcharge</td><td>₹' + newTax.surcharge.toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr><td>Cess (4%)</td><td>₹' + newTax.cess.toLocaleString('en-IN') + '</td></tr>';
+                html += '<tr style="background:#ff9999;"><td><b>TOTAL TAX</b></td><td><b>₹' + newTax.totalTax.toLocaleString('en-IN') + '</b></td></tr>';
+                html += '</table>';
+
+                resultsDiv.innerHTML = html;
+
+            } catch (error) {
+                resultsDiv.innerHTML = '<div class="error">❌ Error: ' + error.message + '</div>';
+                console.error('TEST ERROR:', error);
+            }
+
+            // Update debug output
+            debugDiv.innerHTML = debugOutput.map(line => '<div>' + line + '</div>').join('');
+            debugDiv.scrollTop = debugDiv.scrollHeight;
+        };
+    </script>
+</body>
+</html>
